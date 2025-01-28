@@ -27,13 +27,12 @@
 
     <header>
         <h1>Abyss</h1>
-        <p>Un juego sencillo desarrollado inicialmente solo con Java, luego mejorado con JavaFX para una interfaz gráfica.</p>
+        <p>Un juego sencillo desarrollado inicialmente solo con Java, luego mejorado con JavaFX para una interfaz
+            gráfica.</p>
     </header>
-
+    
     <div class="timeline-container">
         <div class="timeline"></div>
-
-        <!-- Pareja 1 -->
         <div class="timeline-item left">
             <div class="text">
                 <h3>Comienzo del Proyecto</h3>
@@ -50,8 +49,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Pareja 2 -->
         <div class="timeline-item right">
             <div class="text">
                 <h3>Nuevas Entidades</h3>
@@ -65,12 +62,10 @@
                 </div>
             </div>
         </div>
-
-        <!-- Pareja 3 -->
         <div class="timeline-item left">
             <div class="text">
                 <h3>Implementando Funcionalidades</h3>
-                <p>Ya habiendo introducido nuevas entidades en el juego habia que darles funcionalidad. 
+                <p>Ya habiendo introducido nuevas entidades en el juego, había que darles funcionalidad. 
                     Aquí se tuvo que ajustar el funcionamiento del bucle principal del juego para que 
                     detectase a los enemigos al colisionar y asi dar inicio a la batalla, a los NPC se 
                     les dio un diálogo al interactuar con ellos.</p>
@@ -84,12 +79,10 @@
                 </div>
             </div>
         </div>
-
-        <!-- Pareja 4 -->
         <div class="timeline-item right">
             <div class="text">
                 <h3>Gestor de Mapas y Lectura de ficheros</h3>
-                <p>Teniendo entidades funcionales y movimiento un solo mapa se hacia pequeño ¿por qué no hacer más?</p>
+                <p>Teniendo entidades funcionales y movimiento un solo mapa se hacía pequeño ¿por qué no hacer más?</p>
                 <p>Rediseño completo de la carga e inicio del juego con la nueva clase gestor de mapas que permite 
                     que haya tantos mapas como se desee. Nuevo sistema de lectura de ficheros para la información 
                     básica sobre el programa, ahora se pueden introducir todas las entidades deseadas solo con definirlas 
@@ -104,12 +97,14 @@
                 </div>
             </div>
         </div>
-
-        <!-- Pareja 5 -->
-        <div class="timeline-item right">
+        <div class="timeline-item left">
             <div class="text">
-                <h3></h3>
-                <p></p>
+                <h3>Menús y Guardado</h3>
+                <p>Para darle más opciones en batalla al jugador, se ha implementado un sistema de inventario y otro 
+                    de equipamiento, con ambos ahora el jugador puede almacenar objetos de diferentes tipos y equiparse 
+                    aquellos que sean equipables.</p>
+                <p>También se ha desarrollado un sistema de guardado de partida para que el jugador pueda guardar su progreso. 
+                    Para que se puedan usar todas estas opciones comodamente se han incluido en nuevos menús de navegación.</p>
             </div>
             <div class="image-container">
                 <div class="image">
@@ -121,6 +116,78 @@
                     <img src="../../recursos/imagenes/Abyss/Menu_Inventario.png" alt="Info_Mapas" class="project-image">
                     <br>
                     <img src="../../recursos/imagenes/Abyss/Menu_Equipamiento.png" alt="Info_Mapas" class="project-image">
+                </div>
+            </div>
+        </div>
+        <div class="timeline-item right">
+            <div class="text">
+                <h3>Mejora visual, corrección de errores y optimización</h3>
+                <p>Pequeño cambio en la forma de mostrar los mapas, eliminación de funciones obsoletas.</p>
+            </div>
+            <div class="image-container">
+                <div class="image">
+                    <img src="../../recursos/imagenes/Abyss/Mapa_Nuevo.png" alt="" class="project-image">
+                </div>
+                <div class="image">
+                    <img src="../../recursos/imagenes/Abyss/Enemigos-NPC.png" alt="Info_Enemigos" class="project-image">
+                </div>
+            </div>
+        </div>
+        <div class="timeline-item left">
+            <div class="text">
+                <h3>Inicio del desarrollo Gráfico</h3>
+                <p>Ante las limitaciones que tiene el hacer este proyecto en la consola de texto, se tomó 
+                    la decisión de migrar el proyecto a una interfaz gráfica, fue tedioso alterar toda la 
+                    estructura del programa para que funcionase con JavaFX, no obstante, para esta versión 
+                    ya estaba reconstruida la base para empezar a crear todas las pantallas que mostrasen 
+                    todos los sistemas que tenía el proyecto.</p>
+            </div>
+            <div class="image-container">
+                <div class="image">
+                    <img src="../../recursos/imagenes/Abyss/Pantalla_Vacia.png" alt="" class="project-image">
+                </div>
+            </div>
+        </div>
+        <div class="timeline-item right">
+            <div class="text">
+                <h3>Prototipo Visual</h3>
+                <p>Avance del desarrollo gráfico, se hace uso de sprites sencillos a modo de prototipos para 
+                    comprobar el funcionamiento. En esta versión se dibujan todas las "cosas" del juego. 
+                    La movilidad funciona visualmente.</p>
+            </div>
+            <div class="image-container">
+                <div class="image">
+                    <img src="../../recursos/imagenes/Abyss/Pantalla_Mapa.png" alt="" class="project-image">
+                </div>
+                <div class="image">
+                    <img src="../../recursos/imagenes/Abyss/Pantalla_Mapa2.png" alt="" class="project-image">
+                </div>
+            </div>
+        </div>
+        <div class="timeline-item left">
+            <div class="text">
+                <h3>Interfaz de Batalla</h3>
+                <p>Implementación de la interfaz de la batalla, hubo problemas para que se iniciase 
+                    correctamente (en la parte gráfica) pero fue solucionado. En la versión actual 
+                    solo funciona el botón para atacar, no obstante la batalla es completamente funcional.</p>
+            </div>
+            <div class="image-container">
+                <div class="image">
+                    <img src="../../recursos/imagenes/Abyss/Pantalla_Batalla.png" alt="" class="project-image">
+                </div>
+                <div class="image">
+                    <img src="../../recursos/imagenes/Abyss/Pantalla_Batalla_Texto.png" alt="" class="project-image">
+                </div>
+            </div>
+        </div>
+        <div class="timeline-item right">
+            <div class="text">
+                <h3>Dialogos Visuales</h3>
+                <p></p>
+            </div>
+            <div class="image-container">
+                <div class="image">
+                    <img src="../../recursos/imagenes/Abyss/Pantalla_Dialogo.png" alt="" class="project-image">
                 </div>
             </div>
         </div>
