@@ -54,6 +54,42 @@
     footer {
         font-size: 0.8em;
     }
+
+    /* Ajustes para la línea de tiempo y las parejas */
+    .timeline {
+        padding: 0 10px;
+    }
+
+    .timeline-line {
+        width: 2px; /* Reducir el tamaño de la línea */
+    }
+
+    .pair {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 30px;
+    }
+
+    .text-container,
+    .image-container {
+        width: 100%; /* Ambos ocupan el 100% del ancho */
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .image-container {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .image {
+        width: 48%; /* Asegura que las imágenes estén una al lado de la otra */
+    }
+
+    /* Ajuste de las imágenes */
+    .project-image {
+        height: 150px; /* Ajustamos el tamaño de las imágenes */
+    }
 }
 
 @media (max-width: 480px) {
@@ -84,5 +120,31 @@
     .titulosProyectos p,
     .titulosProyectos ul {
         font-size: 0.9em;
+    }
+
+    /* Ajuste de la línea de tiempo */
+    .timeline-line {
+        width: 1px; /* Línea aún más delgada en pantallas pequeñas */
+    }
+
+    .pair {
+        margin-bottom: 20px;
+    }
+
+    /* Ajuste de las imágenes */
+    .project-image {
+        height: 120px; /* Tamaño aún más pequeño en pantallas más pequeñas */
+    }
+
+    .image-container {
+        padding: 5px;
+    }
+
+    .image-container {
+        justify-content: space-between;
+    }
+
+    .image {
+        width: 48%; /* Mantener las imágenes al lado de cada una */
     }
 }

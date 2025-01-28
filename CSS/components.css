@@ -58,3 +58,137 @@
     margin: 0 auto;
     display: block;
 }
+
+.containerProject {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas */
+    gap: 30px;
+    max-width: 1000px;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    margin-top: 80px; /* Para que no se quede tapado por la barra de navegación */
+}
+
+.pair {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pair:nth-child(odd) {
+    flex-direction: row-reverse; /* Pone la imagen a la derecha y el texto a la izquierda para las parejas impares */
+}
+
+.text {
+    flex: 1;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+}
+
+.text h2 {
+    font-size: 1.5em;
+    color: #1f2937;
+    margin-bottom: 10px;
+}
+
+.text p {
+    font-size: 1em;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.image-container {
+    width: 45%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap; /* Evita que las imágenes se envuelvan */
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.image {
+    width: 48%;  /* Reduce el tamaño de las imágenes */
+    margin-bottom: 0;  /* Elimina el margen inferior */
+}
+
+.image-container .image {
+    flex: 0 1 48%;
+    margin: 5px;
+}
+
+.image img {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: block;
+    margin: 0 auto;
+}
+
+/* Línea central del eje temporal */
+.timeline {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background-color: #1f2937;
+    transform: translateX(-50%);
+}
+
+/* Contenedor de las parejas */
+.timeline-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 0;
+}
+
+/* Estilo para cada pareja (texto e imagen) */
+.timeline-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+/* Posición de las imágenes a la izquierda */
+.timeline-item.left {
+    flex-direction: row-reverse; /* Para que el texto esté a la derecha y la imagen a la izquierda */
+}
+
+/* Posición de las imágenes a la derecha */
+.timeline-item.right {
+    flex-direction: row; /* Para que el texto esté a la izquierda y la imagen a la derecha */
+}
+
+/* Estilo para el texto de las parejas */
+.timeline-item .text {
+    max-width: 45%;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para las imágenes */
+.timeline-item .image {
+    width: 40%;
+    margin-left: 20px;
+}
+
+.project-image {
+    width: 100%;  /* La imagen ocupa todo el ancho del div */
+    border-radius: 8px;
+    object-fit: cover;
+    height: auto;
+}
