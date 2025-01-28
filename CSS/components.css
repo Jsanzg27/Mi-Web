@@ -1,0 +1,60 @@
+.card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.card h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #1f2937;
+}
+
+.titulosProyectos {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.titulosProyectos h2 a {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #1f2937;
+    text-decoration: none;
+}
+
+.titulosProyectos h2 a:hover {
+    text-decoration: underline;
+}
+
+.titulosProyectos p,
+.titulosProyectos ul {
+    color: #4b5563;
+    font-size: 1em;
+    line-height: 1.5;
+}
+
+.titulosProyectos ul {
+    padding-left: 20px;
+}
+
+.card p,
+.card ul {
+    color: #4b5563;
+    font-size: 1em;
+    line-height: 1.5;
+}
+
+.card ul {
+    padding-left: 20px;
+}
+.project-image {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    object-fit: cover;
+    margin: 0 auto;
+    display: block;
+}

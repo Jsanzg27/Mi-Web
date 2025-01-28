@@ -1,0 +1,88 @@
+/* Media Queries */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2em;
+    }
+
+    header p {
+        font-size: 1em;
+    }
+
+    .container {
+        grid-template-columns: 1fr; /* Cambiar a una sola columna en pantallas pequeñas */
+        padding: 10px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .project-image {
+        max-width: 200px;
+    }
+
+    .side-menu {
+        width: 200px; /* Menú más pequeño en pantallas móviles */
+    }
+
+    /* Menú lateral: cuando la pantalla es pequeña, el menú puede abrirse encima del contenido */
+    .side-menu.open {
+        left: 0;
+    }
+
+    .top-bar {
+        padding: 10px;
+    }
+
+    .menu-icon {
+        font-size: 1.5em;
+    }
+
+    .site-name {
+        font-size: 1em;
+    }
+
+    /* Ajustes para la sección de contacto */
+    .contact-section h2 {
+        font-size: 1.3em;
+    }
+
+    .contact-section p {
+        font-size: 0.9em;
+    }
+
+    footer {
+        font-size: 0.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.8em;
+    }
+
+    .site-name {
+        font-size: 1em;
+    }
+
+    .contact-section h2 {
+        font-size: 1.2em;
+    }
+
+    .contact-section p {
+        font-size: 0.85em;
+    }
+
+    .card h2 {
+        font-size: 1.2em;
+    }
+
+    .titulosProyectos h2 a {
+        font-size: 1.2em;
+    }
+
+    .titulosProyectos p,
+    .titulosProyectos ul {
+        font-size: 0.9em;
+    }
+}

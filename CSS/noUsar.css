@@ -1,0 +1,309 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f3f4f6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    text-align: center;
+    margin: 60px 0 20px 0;
+}
+
+header h1 {
+    font-size: 2.5em;
+    color: #1f2937;
+}
+
+header p {
+    font-size: 1.2em;
+    color: #4b5563;
+}
+
+.about-me {
+    text-align: center;
+    max-width: 800px;
+    margin: 20px;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #4b5563;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Esto mantiene dos columnas por defecto */
+    gap: 20px;
+    max-width: 800px;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.card h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #1f2937;
+}
+
+.titulosProyectos {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.titulosProyectos h2 a {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #1f2937;
+    text-decoration: none;
+}
+
+.titulosProyectos h2 a:hover {
+    text-decoration: underline;
+}
+
+.titulosProyectos p,
+.titulosProyectos ul {
+    color: #4b5563;
+    font-size: 1em;
+    line-height: 1.5;
+}
+
+.titulosProyectos ul {
+    padding-left: 20px;
+}
+
+.card p,
+.card ul {
+    color: #4b5563;
+    font-size: 1em;
+    line-height: 1.5;
+}
+
+.card ul {
+    padding-left: 20px;
+}
+
+.contact-section {
+    background-color: #e5e7eb;
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 20px;
+}
+
+.contact-section h2 {
+    font-size: 1.5em;
+    color: #1f2937;
+    margin-bottom: 10px;
+}
+
+.contact-section p {
+    font-size: 1em;
+    color: #4b5563;
+    margin: 5px 0;
+}
+
+.contact-section a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.contact-section a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    text-align: center;
+    margin: 20px 0;
+    color: #6b7280;
+    font-size: 0.9em;
+}
+
+.scrollable {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 10px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.scrollable::-webkit-scrollbar {
+    display: none;
+}
+
+/* Estilos para la barra superior */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1f2937;
+    color: white;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.menu-icon {
+    font-size: 1.5em;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.site-name {
+    font-size: 1.2em;
+    flex-grow: 1;
+    text-align: center;
+}
+
+/* Estilos para el menú lateral */
+.side-menu {
+    position: fixed;
+    top: 50px;
+    left: -250px;
+    width: 250px;
+    height: calc(100% - 50px);
+    background-color: #1f2937;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: left 0.3s ease-in-out;
+    z-index: 999;
+}
+
+.side-menu.open {
+    left: 0;
+}
+
+.side-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.side-menu li {
+    margin: 15px 0;
+}
+
+.side-menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+}
+
+.side-menu a:hover {
+    text-decoration: underline;
+}
+
+.project-image {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    object-fit: cover;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2em;
+    }
+
+    header p {
+        font-size: 1em;
+    }
+
+    .container {
+        grid-template-columns: 1fr; /* Cambiar a una sola columna en pantallas pequeñas */
+        padding: 10px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .project-image {
+        max-width: 200px;
+    }
+
+    .side-menu {
+        width: 200px; /* Menú más pequeño en pantallas móviles */
+    }
+
+    /* Menú lateral: cuando la pantalla es pequeña, el menú puede abrirse encima del contenido */
+    .side-menu.open {
+        left: 0;
+    }
+
+    .top-bar {
+        padding: 10px;
+    }
+
+    .menu-icon {
+        font-size: 1.5em;
+    }
+
+    .site-name {
+        font-size: 1em;
+    }
+
+    /* Ajustes para la sección de contacto */
+    .contact-section h2 {
+        font-size: 1.3em;
+    }
+
+    .contact-section p {
+        font-size: 0.9em;
+    }
+
+    footer {
+        font-size: 0.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.8em;
+    }
+
+    .site-name {
+        font-size: 1em;
+    }
+
+    .contact-section h2 {
+        font-size: 1.2em;
+    }
+
+    .contact-section p {
+        font-size: 0.85em;
+    }
+
+    .card h2 {
+        font-size: 1.2em;
+    }
+
+    .titulosProyectos h2 a {
+        font-size: 1.2em;
+    }
+
+    .titulosProyectos p,
+    .titulosProyectos ul {
+        font-size: 0.9em;
+    }
+}
