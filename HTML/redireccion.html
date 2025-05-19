@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Abriendo lista en Íxion Music</title>
+  <script>
+    // Reemplaza con los parámetros que recibas en la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const idUsuario = urlParams.get('id');
+    const idLista = urlParams.get('idLista');
+
+    if (idUsuario && idLista) {
+      // Intenta abrir el esquema custom
+      window.location = `ixionmusic://lista?id=${encodeURIComponent(idUsuario)}&idLista=${encodeURIComponent(idLista)}`;
+
+      // Si no se abre en 2 segundos, muestra un mensaje o enlace alternativo
+      setTimeout(() => {
+        document.getElementById('fallback').style.display = 'block';
+      }, 2000);
+    } else {
+      document.body.innerHTML = '<p>Enlace inválido.</p>';
+    }
+  </script>
+</head>
+<body>
+  <p>Abriendo la app...</p>
+  <p id="fallback" style="display:none;">
+    No se pudo abrir la app automáticamente.<br/>
+    <a href="ixionmusic://lista?id=123&idLista=456">Abrir Íxion Music manualmente</a>
+  </p>
+</body>
+</html>
