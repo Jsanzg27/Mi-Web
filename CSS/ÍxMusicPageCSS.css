@@ -1,0 +1,126 @@
+body {
+    background: linear-gradient(315deg, #1e1b2e, #191726, #121212);
+    color: #FFFFFF;
+    font-family: 'Roboto', sans-serif;
+}
+
+.ixmusic-header {
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.ixmusic-header h1 {
+    font-size: 3rem;
+    color: #7e5bef;
+}
+
+.ixmusic-desc {
+    margin-top: 1rem;
+    color: #CACACA;
+    font-size: 1.2rem;
+}
+
+.ixmusic-btn {
+    margin-top: 2rem;
+    display: inline-block;
+    padding: 0.8rem 1.6rem;
+    background-color: #7e5bef;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.ixmusic-btn:hover {
+    background-color: #9f82ff;
+}
+
+.ixmusic-features {
+    padding: 2rem;
+    background-color: rgba(36, 36, 36, 0.8);
+    text-align: center;
+}
+
+.ixmusic-features h2,
+.ixmusic-gallery h2 {
+    margin-bottom: 1rem;
+    color: #9CA3AF;
+}
+
+.ixmusic-features ul {
+    list-style: none;
+    color: #CACACA;
+    font-size: 1.1rem;
+    padding: 0;
+}
+
+.ixmusic-features li {
+    margin: 0.5rem 0;
+}
+
+.ixmusic-gallery {
+    padding: 2rem;
+    text-align: center;
+}
+
+.gallery {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.gallery img {
+    width: 200px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.ixmusic-descarga {
+    background-color: rgba(30, 27, 46, 0.8);
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #FFFFFF;
+}
+section h2 {
+    font-size: 2rem;
+    color: #7e5bef;
+    margin-bottom: 1.5rem;
+}
+.ixmusic-gallery {
+    background: linear-gradient(315deg, #1e1b2e, #191726);
+}
+
+.ixmusic-features {
+    background: linear-gradient(315deg, #191726, #121212);
+}
+
+.ixmusic-descarga {
+    background: linear-gradient(315deg, #121212, #1e1b2e);
+}
+
+@media (max-width: 768px) {
+    .ixmusic-header h1 {
+        font-size: 2rem;
+    }
+
+    .ixmusic-desc {
+        font-size: 1rem;
+    }
+
+    .ixmusic-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+    }
+
+    .gallery img {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    section {
+        padding: 2rem 1rem;
+    }
+}
