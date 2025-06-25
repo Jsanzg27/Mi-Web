@@ -14,9 +14,13 @@ body::-webkit-scrollbar {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
+.colorlila{
+    color: #7e5bef;
+}
+
 .ixmusic-header h1 {
     font-size: 3rem;
-    color: #7e5bef;
+    color: white;
 }
 
 .ixmusic-header img {
