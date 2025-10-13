@@ -85,7 +85,7 @@ async function playSong(listItem) {
     // 2. Obtener la URL de streaming desde Firebase Storage
     try {
         // La ruta ya está completa y lista para usarse
-        const fileRef = storage.ref(storageRefPath);
+        const fileRef = storage.refFromURL(storageRefPath);
         const url = await fileRef.getDownloadURL(); // ¡Obteniendo la URL de streaming!
         
         // 3. Reproducción
