@@ -19,7 +19,7 @@ const storage = firebase.storage();
 async function loadSongs() {
   const container = document.getElementById('app-container');
   try {
-    const songsSnapshot = await db.collection('songs').get();
+    const songsSnapshot = await db.collection('catalogo').get();
     const songs = [];
     
     songsSnapshot.forEach(doc => {
@@ -71,8 +71,8 @@ function renderMusicPlayer(songs) {
 // -----------------------------------------------------
 // --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN ---
 async function playSong(listItem) {
-    const storageRefPath = listItem.getAttribute('data-storage-ref');
-    const title = listItem.getAttribute('data-title');
+    const storageRefPath = listItem.getAttribute('id');
+    const title = listItem.getAttribute('nombre');
     
     // 1. Obtener la URL de descarga (Streaming) desde Firebase Storage
     // Asegúrese de que su referencia de storage es correcta (ej. 'music/cancion.mp3')
