@@ -69,54 +69,52 @@ function renderMusicPlayer(songs) {
     window.playerElement = document.getElementById('player');
 }
 // -----------------------------------------------------
-// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN (VERSIÓN FINAL CON EXTRACCIÓN DE ID) ---
+// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN (VERSIÓN FINAL CON FIREBASE STORAGE) ---
 async function playSong(listItem) {
-    // 1. Lectura de la URL COMPLETA
-    // Ejemplo de valor en fullDriveUrl: "https://drive.google.com/uc?id=1RcwKF4V-F-loHmyMm4lPoK5znsPXnbj5"
+    // 1. Lectura de la URL COMPLETA de la base de datos (Ej: https://drive.google.com/uc?id=...)
     const fullDriveUrl = listItem.getAttribute('data-storage-ref'); 
     const title = listItem.getAttribute('data-title');
     
-    // 2. Extracción del ID del archivo (Todo después de 'uc?id=')
-    let driveFileId = '';
-    
-    // Buscamos la posición del patrón "uc?id="
+    // --- Extracción del ID (la lógica que ya funciona) ---
+    let fileId = '';
     const pattern = 'uc?id=';
     const startIndex = fullDriveUrl.indexOf(pattern);
     
     if (startIndex !== -1) {
-        // Si lo encontramos, extraemos la subcadena que comienza después de este patrón
-        driveFileId = fullDriveUrl.substring(startIndex + pattern.length);
-        
-        // Opcional: Si hubiera otros parámetros después del ID (&...), los cortamos.
-        const ampIndex = driveFileId.indexOf('&');
+        fileId = fullDriveUrl.substring(startIndex + pattern.length);
+        const ampIndex = fileId.indexOf('&');
         if (ampIndex !== -1) {
-            driveFileId = driveFileId.substring(0, ampIndex);
+            fileId = fileId.substring(0, ampIndex);
         }
     }
-
-    // 3. Verificación y Construcción de la URL de Streaming
-    if (!driveFileId || driveFileId.trim() === '') {
-        console.error("Error: El ID de archivo no pudo ser extraído de la URL.");
-        alert("La URL de Drive no tiene el formato esperado (uc?id=).");
+    
+    if (!fileId) {
+        console.error("Error: ID de archivo no pudo ser extraído de la URL.");
+        alert("La URL no tiene el formato esperado (uc?id=).");
         return; 
     }
+    
+    // 2. CONSTRUIR LA RUTA DE FIREBASE STORAGE (CRÍTICO)
+    // Asumimos que la carpeta es 'musica/' y el archivo es el ID + la extensión
+    const storageRefPath = `musica/${fileId}.mp3`; 
 
-    // Usamos el ID extraído para construir la URL de streaming más compatible
-    const url = `https://drive.google.com/open?id=${driveFileId}&usp=sharing`; // o usar la URL original si prefiere: `https://drive.google.com/uc?export=download&id=${driveFileId}`
-
-    // 4. Establecer la fuente y reproducir
+    // 3. Obtener la URL de streaming desde Firebase Storage
     try {
+        const fileRef = storage.ref(storageRefPath);
+        const url = await fileRef.getDownloadURL(); // ¡Esta URL sí funciona para streaming!
+        
+        // 4. Reproducción
         window.playerElement.src = url;
         await window.playerElement.play(); 
         
+        // 5. Actualizar la interfaz
         document.getElementById('current-track').textContent = `Reproduciendo: ${title}`;
         document.querySelectorAll('#song-list li').forEach(li => li.classList.remove('active'));
         listItem.classList.add('active');
 
     } catch (error) {
-        // NotSupportedError: El navegador no puede reproducir la fuente
-        console.error("Error al reproducir el audio de Google Drive:", error);
-        alert("No se pudo iniciar la reproducción. La fuente de Drive está siendo rechazada (permisos o formato).");
+        console.error("Error con Firebase Storage:", error);
+        alert("Fallo al obtener la URL. Revise los permisos de Storage y la ruta 'musica/[ID].mp3'.");
     }
 }
 // ---------------------------------------------------------------------------------
