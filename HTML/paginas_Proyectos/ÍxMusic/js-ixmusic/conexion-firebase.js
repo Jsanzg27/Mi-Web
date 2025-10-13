@@ -73,7 +73,7 @@ function renderMusicPlayer(songs) {
 async function playSong(listItem) {
     // 1. Lectura de atributos de datos
     // 'data-storage-ref' ahora contiene el ID del archivo de Google Drive
-    const driveFileId = listItem.getAttribute('id'); 
+    const driveFileId = listItem.getAttribute('data-storage-ref'); 
     const title = listItem.getAttribute('data-title');
     
     // 2. Verificación y Construcción de la URL de Streaming
