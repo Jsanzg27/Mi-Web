@@ -69,40 +69,54 @@ function renderMusicPlayer(songs) {
     window.playerElement = document.getElementById('player');
 }
 // -----------------------------------------------------
-// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN (CORREGIDA PARA URL COMPLETA) ---
+// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN (VERSIÓN FINAL CON EXTRACCIÓN DE ID) ---
 async function playSong(listItem) {
-    // 1. Lectura de atributos de datos
-    // Esta variable ahora contiene la URL de Drive COMPLETA (ej: https://drive.google.com/uc?id=...)
+    // 1. Lectura de la URL COMPLETA
+    // Ejemplo de valor en fullDriveUrl: "https://drive.google.com/uc?id=1RcwKF4V-F-loHmyMm4lPoK5znsPXnbj5"
     const fullDriveUrl = listItem.getAttribute('data-storage-ref'); 
     const title = listItem.getAttribute('data-title');
     
-    // 2. Verificación y uso directo de la URL
-    if (!fullDriveUrl || fullDriveUrl.trim() === '') {
-        console.error("Error: La URL de audio de Google Drive está vacía.");
-        alert("URL de archivo no definida para la canción.");
+    // 2. Extracción del ID del archivo (Todo después de 'uc?id=')
+    let driveFileId = '';
+    
+    // Buscamos la posición del patrón "uc?id="
+    const pattern = 'uc?id=';
+    const startIndex = fullDriveUrl.indexOf(pattern);
+    
+    if (startIndex !== -1) {
+        // Si lo encontramos, extraemos la subcadena que comienza después de este patrón
+        driveFileId = fullDriveUrl.substring(startIndex + pattern.length);
+        
+        // Opcional: Si hubiera otros parámetros después del ID (&...), los cortamos.
+        const ampIndex = driveFileId.indexOf('&');
+        if (ampIndex !== -1) {
+            driveFileId = driveFileId.substring(0, ampIndex);
+        }
+    }
+
+    // 3. Verificación y Construcción de la URL de Streaming
+    if (!driveFileId || driveFileId.trim() === '') {
+        console.error("Error: El ID de archivo no pudo ser extraído de la URL.");
+        alert("La URL de Drive no tiene el formato esperado (uc?id=).");
         return; 
     }
 
-    // ELIMINAMOS TODA LA LÓGICA DE CONSTRUCCIÓN.
-    // La URL de streaming es directamente el valor leído de la base de datos.
-    const url = fullDriveUrl; 
+    // Usamos el ID extraído para construir la URL de streaming más compatible
+    const url = `https://drive.google.com/open?id=${driveFileId}&usp=sharing`; // o usar la URL original si prefiere: `https://drive.google.com/uc?export=download&id=${driveFileId}`
 
-    // 3. Establecer la fuente y reproducir
+    // 4. Establecer la fuente y reproducir
     try {
         window.playerElement.src = url;
         await window.playerElement.play(); 
         
-        // 4. Actualizar la interfaz
         document.getElementById('current-track').textContent = `Reproduciendo: ${title}`;
-        
-        // Opcional: Resaltar la canción activa
         document.querySelectorAll('#song-list li').forEach(li => li.classList.remove('active'));
         listItem.classList.add('active');
 
     } catch (error) {
-        // El NotSupportedError ocurrirá aquí si el navegador rechaza la URL.
+        // NotSupportedError: El navegador no puede reproducir la fuente
         console.error("Error al reproducir el audio de Google Drive:", error);
-        alert("No se pudo iniciar la reproducción. Verifique la URL y los permisos de Drive.");
+        alert("No se pudo iniciar la reproducción. La fuente de Drive está siendo rechazada (permisos o formato).");
     }
 }
 // ---------------------------------------------------------------------------------
