@@ -69,52 +69,37 @@ function renderMusicPlayer(songs) {
     window.playerElement = document.getElementById('player');
 }
 // -----------------------------------------------------
-// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN (VERSIÓN FINAL CON FIREBASE STORAGE) ---
+// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN (VERSIÓN FINAL Y OPTIMIZADA) ---
 async function playSong(listItem) {
-    // 1. Lectura de la URL COMPLETA de la base de datos (Ej: https://drive.google.com/uc?id=...)
-    const fullDriveUrl = listItem.getAttribute('data-storage-ref'); 
+    // 1. Lectura de la RUTA DE STORAGE (Ej: 'musica/nombre_del_archivo.mp3')
+    const storageRefPath = listItem.getAttribute('data-storage-ref'); 
     const title = listItem.getAttribute('data-title');
     
-    // --- Extracción del ID (la lógica que ya funciona) ---
-    let fileId = '';
-    const pattern = 'uc?id=';
-    const startIndex = fullDriveUrl.indexOf(pattern);
-    
-    if (startIndex !== -1) {
-        fileId = fullDriveUrl.substring(startIndex + pattern.length);
-        const ampIndex = fileId.indexOf('&');
-        if (ampIndex !== -1) {
-            fileId = fileId.substring(0, ampIndex);
-        }
-    }
-    
-    if (!fileId) {
-        console.error("Error: ID de archivo no pudo ser extraído de la URL.");
-        alert("La URL no tiene el formato esperado (uc?id=).");
+    // Verificación de la ruta
+    if (!storageRefPath) {
+        console.error("Error: La ruta de Storage (data-storage-ref) está vacía.");
+        alert("Fallo al obtener la ruta del archivo de la lista.");
         return; 
     }
     
-    // 2. CONSTRUIR LA RUTA DE FIREBASE STORAGE (CRÍTICO)
-    // Asumimos que la carpeta es 'musica/' y el archivo es el ID + la extensión
-    const storageRefPath = `musica/${fileId}.mp3`; 
-
-    // 3. Obtener la URL de streaming desde Firebase Storage
+    // 2. Obtener la URL de streaming desde Firebase Storage
     try {
+        // La ruta ya está completa y lista para usarse
         const fileRef = storage.ref(storageRefPath);
-        const url = await fileRef.getDownloadURL(); // ¡Esta URL sí funciona para streaming!
+        const url = await fileRef.getDownloadURL(); // ¡Obteniendo la URL de streaming!
         
-        // 4. Reproducción
+        // 3. Reproducción
         window.playerElement.src = url;
         await window.playerElement.play(); 
         
-        // 5. Actualizar la interfaz
+        // 4. Actualizar la interfaz
         document.getElementById('current-track').textContent = `Reproduciendo: ${title}`;
         document.querySelectorAll('#song-list li').forEach(li => li.classList.remove('active'));
         listItem.classList.add('active');
 
     } catch (error) {
         console.error("Error con Firebase Storage:", error);
-        alert("Fallo al obtener la URL. Revise los permisos de Storage y la ruta 'musica/[ID].mp3'.");
+        alert("Fallo al obtener la URL. Revise las reglas de Storage y asegúrese de que la ruta del archivo sea correcta.");
     }
 }
 // ---------------------------------------------------------------------------------
