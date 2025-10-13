@@ -48,7 +48,7 @@ function renderMusicPlayer(songs) {
         <section class="music-player-area">
             <h2>Reproduciendo Ahora</h2>
             <div id="current-track">Selecciona una canción</div>
-            <audio id="player" controls style="width: 100%; margin-top: 15px;"></audio>
+            <audio id="player" controls controlsList="nodownload" controls style="width: 100%; margin-top: 15px;"></audio>
         </section>
 
         <section class="song-list-area">
