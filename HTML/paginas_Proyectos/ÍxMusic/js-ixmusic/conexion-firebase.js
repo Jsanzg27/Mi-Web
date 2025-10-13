@@ -55,10 +55,10 @@ function renderMusicPlayer(songs) {
             <h2>Tu Biblioteca ÍxMusic</h2>
             <ul id="song-list">
                 ${songs.map(song => `
-                    <li data-storage-ref="${song.storageRef}" 
-                        data-title="${song.title}"
+                    <li data-storage-ref="${song.id}" 
+                        data-title="${song.nombre}"
                         onclick="playSong(this)">
-                        ${song.title} - ${song.artist}
+                        ${song.nombre} - ${song.autor}
                     </li>
                 `).join('')}
             </ul>
