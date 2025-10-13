@@ -69,28 +69,26 @@ function renderMusicPlayer(songs) {
     window.playerElement = document.getElementById('player');
 }
 // -----------------------------------------------------
-// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN (VERSIÓN FINAL PARA GOOGLE DRIVE) ---
+// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN (CORREGIDA PARA URL COMPLETA) ---
 async function playSong(listItem) {
     // 1. Lectura de atributos de datos
-    // 'data-storage-ref' ahora contiene el ID del archivo de Google Drive
-    const driveFileId = listItem.getAttribute('data-storage-ref'); 
+    // Esta variable ahora contiene la URL de Drive COMPLETA (ej: https://drive.google.com/uc?id=...)
+    const fullDriveUrl = listItem.getAttribute('data-storage-ref'); 
     const title = listItem.getAttribute('data-title');
     
-    // 2. Verificación y Construcción de la URL de Streaming
-    if (!driveFileId || driveFileId.trim() === '') {
-        console.error("Error: El ID del archivo de Google Drive está vacío.");
-        alert("ID de archivo no definido para la canción.");
+    // 2. Verificación y uso directo de la URL
+    if (!fullDriveUrl || fullDriveUrl.trim() === '') {
+        console.error("Error: La URL de audio de Google Drive está vacía.");
+        alert("URL de archivo no definida para la canción.");
         return; 
     }
 
-    // CONSTRUCCIÓN DE LA URL DE GOOGLE DRIVE PARA STREAMING
-    // Este endpoint de Drive permite que el <audio> tag lo reproduzca.
-    const url = `https://drive.google.com/uc?export=download&id=${driveFileId}`;
+    // ELIMINAMOS TODA LA LÓGICA DE CONSTRUCCIÓN.
+    // La URL de streaming es directamente el valor leído de la base de datos.
+    const url = fullDriveUrl; 
 
     // 3. Establecer la fuente y reproducir
     try {
-        // La línea 95 (donde estaba el error de Storage) ha sido ELIMINADA.
-        
         window.playerElement.src = url;
         await window.playerElement.play(); 
         
@@ -102,9 +100,9 @@ async function playSong(listItem) {
         listItem.classList.add('active');
 
     } catch (error) {
-        // Si hay un error aquí, es probable que sea por permisos de Autoplay o Drive.
+        // El NotSupportedError ocurrirá aquí si el navegador rechaza la URL.
         console.error("Error al reproducir el audio de Google Drive:", error);
-        alert("No se pudo iniciar la reproducción. Revise permisos de Drive (el archivo debe ser público).");
+        alert("No se pudo iniciar la reproducción. Verifique la URL y los permisos de Drive.");
     }
 }
-// -----------------------------------------------------
+// ---------------------------------------------------------------------------------
