@@ -69,29 +69,30 @@ function renderMusicPlayer(songs) {
     window.playerElement = document.getElementById('player');
 }
 // -----------------------------------------------------
-// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN (CORREGIDA PARA GOOGLE DRIVE) ---
+// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN (VERSIÓN FINAL PARA GOOGLE DRIVE) ---
 async function playSong(listItem) {
     // 1. Lectura de atributos de datos
-    // CORREGIDO: Leer data-storage-ref y data-title
-    const driveFileId = listItem.getAttribute('data-storage-ref');
+    // 'data-storage-ref' ahora contiene el ID del archivo de Google Drive
+    const driveFileId = listItem.getAttribute('id'); 
     const title = listItem.getAttribute('data-title');
     
-    // VERIFICACIÓN CRÍTICA
+    // 2. Verificación y Construcción de la URL de Streaming
     if (!driveFileId || driveFileId.trim() === '') {
-        console.error("Error: El ID del archivo de Google Drive (data-storage-ref) está vacío.");
-        alert("ID de archivo no definido en la base de datos.");
+        console.error("Error: El ID del archivo de Google Drive está vacío.");
+        alert("ID de archivo no definido para la canción.");
         return; 
     }
 
-    // 2. CONSTRUCCIÓN DE LA URL DE STREAMING DE GOOGLE DRIVE
-    // Firebase Storage es ELIMINADO. Usamos la URL especial de Drive.
-    // Esta URL obliga a la descarga/streaming del archivo público.
+    // CONSTRUCCIÓN DE LA URL DE GOOGLE DRIVE PARA STREAMING
+    // Este endpoint de Drive permite que el <audio> tag lo reproduzca.
     const url = `https://drive.google.com/uc?export=download&id=${driveFileId}`;
 
     // 3. Establecer la fuente y reproducir
     try {
+        // La línea 95 (donde estaba el error de Storage) ha sido ELIMINADA.
+        
         window.playerElement.src = url;
-        await window.playerElement.play(); // Usar await en play() para manejar errores de auto-play
+        await window.playerElement.play(); 
         
         // 4. Actualizar la interfaz
         document.getElementById('current-track').textContent = `Reproduciendo: ${title}`;
@@ -101,8 +102,9 @@ async function playSong(listItem) {
         listItem.classList.add('active');
 
     } catch (error) {
+        // Si hay un error aquí, es probable que sea por permisos de Autoplay o Drive.
         console.error("Error al reproducir el audio de Google Drive:", error);
-        alert("No se pudo iniciar la reproducción. Asegúrese de que el archivo de Drive es público.");
+        alert("No se pudo iniciar la reproducción. Revise permisos de Drive (el archivo debe ser público).");
     }
 }
 // -----------------------------------------------------
