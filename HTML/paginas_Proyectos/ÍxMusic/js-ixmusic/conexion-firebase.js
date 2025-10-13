@@ -69,31 +69,40 @@ function renderMusicPlayer(songs) {
     window.playerElement = document.getElementById('player');
 }
 // -----------------------------------------------------
-// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN ---
+// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN (CORREGIDA PARA GOOGLE DRIVE) ---
 async function playSong(listItem) {
-    const storageRefPath = listItem.getAttribute('id');
-    const title = listItem.getAttribute('nombre');
+    // 1. Lectura de atributos de datos
+    // CORREGIDO: Leer data-storage-ref y data-title
+    const driveFileId = listItem.getAttribute('data-storage-ref');
+    const title = listItem.getAttribute('data-title');
     
-    // 1. Obtener la URL de descarga (Streaming) desde Firebase Storage
-    // Asegúrese de que su referencia de storage es correcta (ej. 'music/cancion.mp3')
-    try {
-        const fileRef = storage.ref(storageRefPath);
-        const url = await fileRef.getDownloadURL(); 
+    // VERIFICACIÓN CRÍTICA
+    if (!driveFileId || driveFileId.trim() === '') {
+        console.error("Error: El ID del archivo de Google Drive (data-storage-ref) está vacío.");
+        alert("ID de archivo no definido en la base de datos.");
+        return; 
+    }
 
-        // 2. Establecer la fuente y reproducir
+    // 2. CONSTRUCCIÓN DE LA URL DE STREAMING DE GOOGLE DRIVE
+    // Firebase Storage es ELIMINADO. Usamos la URL especial de Drive.
+    // Esta URL obliga a la descarga/streaming del archivo público.
+    const url = `https://drive.google.com/uc?export=download&id=${driveFileId}`;
+
+    // 3. Establecer la fuente y reproducir
+    try {
         window.playerElement.src = url;
-        window.playerElement.play();
+        await window.playerElement.play(); // Usar await en play() para manejar errores de auto-play
         
-        // 3. Actualizar la interfaz
+        // 4. Actualizar la interfaz
         document.getElementById('current-track').textContent = `Reproduciendo: ${title}`;
         
-        // Opcional: Resaltar la canción activa en la lista (manejo de CSS)
+        // Opcional: Resaltar la canción activa
         document.querySelectorAll('#song-list li').forEach(li => li.classList.remove('active'));
         listItem.classList.add('active');
 
     } catch (error) {
-        console.error("Error al obtener la URL o reproducir:", error);
-        alert("No se pudo cargar la canción. ¿Permisos de Storage OK?");
+        console.error("Error al reproducir el audio de Google Drive:", error);
+        alert("No se pudo iniciar la reproducción. Asegúrese de que el archivo de Drive es público.");
     }
 }
 // -----------------------------------------------------
