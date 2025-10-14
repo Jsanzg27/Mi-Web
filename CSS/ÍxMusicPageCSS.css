@@ -1,146 +1,344 @@
-body {
-    background: linear-gradient(315deg, #2b2742, #26233a, #1b1b26);
+/* ========================================= */
+/* 1. VARIABLES GLOBALES Y ESTILOS BASE */
+/* ========================================= */
 
-    color: #FFFFFF;
+:root {
+    /* Paleta de Colores de IxMusic */
+    --color-fondo-oscuro: #121212;         /* Fondo muy oscuro (casi negro) */
+    --color-fondo-intermedio: #1e1b2e;     /* Fondo de sección (tu gradiente base) */
+    --color-acento-lila: #7e5bef;          /* Tu lila principal */
+    --color-acento-lila-hover: #9f82ff;    /* Lila claro para hover */
+    --color-texto-claro: #FFFFFF;
+    --color-texto-secundario: #9CA3AF;     /* Gris para subtítulos/descripciones */
+    --color-tarjeta-fondo: #282828;        /* Fondo sutil para tarjetas (ej. <li>) */
+}
+
+body {
+    /* Usamos el color de fondo más oscuro como base */
+    background-color: var(--color-fondo-oscuro);
+    
+    /* Mantengo tu gradiente inicial para un toque extra, pero lo hacemos menos dominante: */
+    /* background: linear-gradient(315deg, #2b2742, #26233a, #1b1b26); */
+
+    color: var(--color-texto-claro);
     font-family: 'Roboto', sans-serif;
 }
+/* Aunque no es ideal, mantengo la ocultación del scrollbar si lo deseas: */
 body::-webkit-scrollbar {
-  display: none; /* Chrome, Safari y Opera */
+    display: none; 
 }
 
-.ixmusic-header {
-    text-align: center;
-    border-radius: 25px;
-    padding: 4rem 2rem;
-    background-color: rgba(0, 0, 0, 0.5);
+/* Espacio inferior para evitar que el contenido sea tapado por el reproductor fijo */
+main {
+    padding-bottom: 80px; 
+    /* Centrar y limitar ancho para mejor lectura en pantallas grandes */
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
-.header-content p{
-    color: #9CA3AF;
-}
+/* ========================================= */
+/* 2. ESTILOS DE NAVEGACIÓN Y MARCA */
+/* ========================================= */
 
-.colorlila{
-    color: #7e5bef;
-}
-
-.ixmusic-header h1 {
-    font-size: 3rem;
-    color: white;
-}
-
-.ixmusic-header img {
-    max-width: 50%;
-    max-height: 50%;
-}
-
-.ixmusic-desc {
-    margin-top: 1rem;
-    color: #CACACA;
-    font-size: 1.2rem;
+.colorlila {
+    color: var(--color-acento-lila);
 }
 
 .ixmusic-btn {
     margin-top: 2rem;
     display: inline-block;
     padding: 0.8rem 1.6rem;
-    background-color: #7e5bef;
-    color: white;
+    background-color: var(--color-acento-lila);
+    color: var(--color-texto-claro);
     text-decoration: none;
     border-radius: 8px;
-    transition: background 0.3s;
+    transition: background 0.3s, transform 0.2s; /* Añadimos transform */
+    font-weight: bold;
+    letter-spacing: 0.5px;
 }
 
 .ixmusic-btn:hover {
-    background-color: #9f82ff;
+    background-color: var(--color-acento-lila-hover);
+    transform: translateY(-2px); /* Efecto de "levantamiento" */
 }
 
-.ixmusic-features {
-    padding: 2rem;
-    background-color: rgba(36, 36, 36, 0.8);
+/* ========================================= */
+/* 3. SECCIÓN DE CABECERA (HEADER) */
+/* ========================================= */
+
+.ixmusic-header {
     text-align: center;
+    /* Quitamos el border-radius para un look más de ancho completo */
+    padding: 5rem 2rem; /* Más espacio para impacto visual */
+    background-color: rgba(0, 0, 0, 0.5);
+    margin-bottom: 40px; /* Separación del resto del contenido */
 }
 
-.ixmusic-features h2,
-.ixmusic-gallery h2 {
-    margin-bottom: 1rem;
-    color: #9CA3AF;
-}
-
-.ixmusic-features ul {
-    list-style: none;
-    color: #CACACA;
+.header-content p {
+    color: var(--color-texto-secundario);
     font-size: 1.1rem;
-    padding: 0;
+    max-width: 600px;
+    margin: 1rem auto;
 }
 
-.ixmusic-features li {
-    margin: 0.5rem 0;
+.ixmusic-header h1 {
+    font-size: 3.5rem; /* Hacemos el título más grande */
+    color: var(--color-texto-claro);
+    margin-bottom: 0.5rem;
 }
+
+.ixmusic-header img {
+    /* Reducimos el tamaño de la imagen del logo en el header para que no domine tanto */
+    max-width: 150px; 
+    max-height: 150px;
+    margin-bottom: 1rem;
+}
+
+/* ========================================= */
+/* 4. SECCIONES GENERALES (GALERÍA, CARACT.) */
+/* ========================================= */
+
+section {
+    padding: 3rem 2rem;
+    border-radius: 12px; /* Redondeo más moderno */
+    margin-bottom: 30px; /* Separación entre secciones */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Sombra para dar profundidad */
+}
+
+section h2 {
+    font-size: 2.2rem;
+    color: var(--color-acento-lila);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+/* Estilos de Fondo para las secciones (usando el color intermedio) */
+.ixmusic-gallery {
+    background: var(--color-fondo-intermedio);
+}
+.ixmusic-caracteristicas { /* Cambio a la clase correcta para la sección de features */
+    background: var(--color-fondo-intermedio);
+}
+.ixmusic-descarga {
+    background: var(--color-fondo-intermedio);
+}
+
+/* ========================================= */
+/* 5. GALERÍA DE PANTALLAZOS */
+/* ========================================= */
 
 .ixmusic-gallery {
-    padding: 2rem;
     text-align: center;
-    border-radius: 25px;
 }
 
 .gallery {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Layout responsivo */
+    gap: 1.5rem;
+    padding-top: 1rem;
 }
 
 .gallery img {
-    width: 200px;
+    width: 100%; /* Asegura que la imagen ocupe su columna */
     height: auto;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6); 
+    transition: transform 0.3s ease, border 0.3s ease;
+    border: 1px solid rgba(126, 91, 239, 0.1); /* Borde muy sutil */
 }
 
-.ixmusic-descarga {
-    background-color: rgba(30, 27, 46, 0.8);
+.gallery img:hover {
+    transform: translateY(-5px) scale(1.02); 
+    border-color: var(--color-acento-lila); /* Destacar al pasar el ratón */
+}
+
+/* ========================================= */
+/* 6. CARACTERÍSTICAS */
+/* ========================================= */
+
+.ixmusic-caracteristicas h2 {
+    color: var(--color-acento-lila);
+}
+
+.ixmusic-caracteristicas ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.ixmusic-caracteristicas li {
+    /* Diseño de tarjetas para cada característica */
+    background-color: var(--color-tarjeta-fondo);
+    padding: 18px 25px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 450px; /* Limitar ancho en escritorio */
+    text-align: left;
+    transition: background-color 0.3s;
+    font-size: 1.1rem;
+    color: var(--color-texto-secundario); /* Usamos el color secundario aquí */
+}
+
+.ixmusic-caracteristicas li:hover {
+    background-color: #383838;
+}
+
+
+/* ========================================= */
+/* 7. REPRODUCTOR FIJO (AÑADIR ESTE BLOQUE) */
+/* ========================================= */
+
+.fixed-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background-color: #181818; /* Un color ligeramente más oscuro que las secciones */
+    border-top: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 1000;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
+}
+
+.song-info {
+    display: flex;
+    align-items: center;
+    width: 25%;
+}
+
+.player-cover {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    margin-right: 15px;
+}
+
+.text-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.player-title {
+    font-weight: bold;
+    color: var(--color-texto-claro);
+    font-size: 1rem;
+}
+
+.player-artist {
+    color: var(--color-texto-secundario);
+    font-size: 0.85rem;
+}
+
+.controls {
+    display: flex;
+    gap: 20px;
+    width: 30%;
+    justify-content: center;
+}
+
+.controls button {
+    background: none;
+    border: none;
+    color: var(--color-texto-claro);
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.controls button:hover {
+    color: var(--color-acento-lila);
+}
+
+.progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 40%;
+}
+
+#seek-bar {
+    flex-grow: 1;
+    height: 4px;
+    /* Estilos del slider (barra de progreso) */
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    background: #555;
+    border-radius: 2px;
+}
+
+#seek-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-acento-lila);
+}
+
+.time-current, .time-total {
+    font-size: 0.8rem;
+    color: var(--color-texto-secundario);
+}
+
+/* ========================================= */
+/* 8. FOOTER */
+/* ========================================= */
+
+footer {
+    background-color: #0d0d0d;
+    padding: 15px;
     text-align: center;
-    padding: 4rem 2rem;
-    border-radius: 25px;
-    color: #FFFFFF;
-}
-section h2 {
-    font-size: 2rem;
-    color: #7e5bef;
-    margin-bottom: 1.5rem;
-}
-.ixmusic-gallery {
-    background: linear-gradient(315deg, #1e1b2e, #191726);
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 30px;
 }
 
-.ixmusic-features {
-    background: linear-gradient(315deg, #191726, #121212);
-}
+/* ========================================= */
+/* 9. MEDIA QUERIES (RESPONSIVO) */
+/* ========================================= */
 
-.ixmusic-descarga {
-    background: linear-gradient(315deg, #121212, #1e1b2e);
+@media (max-width: 1024px) {
+    .progress-bar {
+        width: 35%; /* Más espacio para la barra de progreso en tablets */
+    }
 }
 
 @media (max-width: 768px) {
     .ixmusic-header h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
     }
 
-    .ixmusic-desc {
-        font-size: 1rem;
+    .ixmusic-caracteristicas ul li {
+        width: 100%; /* Una columna en móvil */
+        max-width: none;
     }
 
-    .ixmusic-btn {
-        padding: 0.6rem 1.2rem;
-        font-size: 1rem;
+    /* Ocultar elementos del reproductor para ahorrar espacio en móvil */
+    .fixed-player {
+        justify-content: center;
+        height: 60px;
+        padding: 0 10px;
     }
-
-    .gallery img {
-        width: 100%;
-        max-width: 300px;
+    .song-info {
+        width: auto;
     }
-
-    section {
-        padding: 2rem 1rem;
+    .progress-bar {
+        display: none; /* Ocultar la barra de progreso en móvil */
+    }
+    .text-info {
+        display: none; /* Ocultar título/artista en la barra fija de móvil */
+    }
+    .controls {
+        width: auto;
     }
 }

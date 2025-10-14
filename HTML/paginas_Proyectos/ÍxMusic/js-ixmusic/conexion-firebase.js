@@ -10,96 +10,260 @@ const firebaseConfig = {
   measurementId: "G-03PC0VRPFC"
 };
 
-// Inicializar Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore(); // O firebase.database()
+// -----------------------------------------------------
+// --- VARIABLES DE ESTADO Y REFERENCIAS DEL DOM ---
+// -----------------------------------------------------
+
+// Referencias a los servicios de Firebase
+const db = firebase.firestore(); 
 const storage = firebase.storage();
+
+// Variables de estado del reproductor
+let songs = []; // Almacenará la lista completa de canciones
+let currentSongIndex = -1;
+let isPlaying = false;
+
+// Referencias a los elementos del reproductor fijo (#player-bar)
+const audioPlayerElement = document.getElementById('audio-player');
+const playPauseBtn = document.getElementById('play-pause-btn');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const seekBar = document.getElementById('seek-bar');
+const titleSpan = document.querySelector('.player-title');
+const artistSpan = document.querySelector('.player-artist');
+const timeCurrentSpan = document.querySelector('.time-current');
+const timeTotalSpan = document.querySelector('.time-total');
+const playerCover = document.querySelector('.player-cover');
+const songListContainer = document.getElementById('song-list-container');
+
+
 // -----------------------------------------------------
-// --- 2. CARGAR LISTA DE CANCIONES ---
+// --- 1. CARGAR LISTA DE CANCIONES DESDE FIRESTORE ---
+// -----------------------------------------------------
+
 async function loadSongs() {
-  const container = document.getElementById('app-container');
-  try {
-    const songsSnapshot = await db.collection('catalogo').get();
-    const songs = [];
-    
-    songsSnapshot.forEach(doc => {
-      songs.push({ id: doc.id, ...doc.data() });
-    });
-    
-    // Una vez cargadas, renderizar el reproductor y la lista
-    renderMusicPlayer(songs); 
+    try {
+        // Consulta la colección 'catalogo'
+        const songsSnapshot = await db.collection('catalogo').get();
+        
+        songsSnapshot.forEach(doc => {
+            // Se asume que doc.data() contiene: nombre, autor, y storageRef (ruta de Storage)
+            songs.push({ id: doc.id, ...doc.data() });
+        });
+        
+        if (songs.length > 0) {
+            renderSongList(); // Muestra la lista en el DOM
+            setupPlayerControls(); // Configura los listeners para la barra fija
+        } else {
+            songListContainer.innerHTML = '<p>No se encontraron canciones en el catálogo.</p>';
+        }
 
-  } catch (error) {
-    console.error("Error al cargar canciones:", error);
-    container.innerHTML = '<h1>Error al cargar la música. Revise la consola.</h1>';
-  }
+    } catch (error) {
+        console.error("Error al cargar canciones:", error);
+        if (songListContainer) {
+            songListContainer.innerHTML = '<h2>Error al cargar la música. Revise la consola.</h2>';
+        }
+    }
 }
 
-// Llamar a la función al cargar la página
+// Llama a la función al cargar el script
 loadSongs();
+
 // -----------------------------------------------------
-// --- 3. RENDERIZADO Y LÓGICA DEL REPRODUCTOR ---
+// --- 2. RENDERIZADO DE LA LISTA EN EL #song-list-container ---
+// -----------------------------------------------------
 
-const audioPlayer = new Audio(); // Objeto nativo de audio
+function renderSongList() {
+    if (!songListContainer) return;
 
-function renderMusicPlayer(songs) {
-    const container = document.getElementById('app-container');
-    container.innerHTML = `
-        <section class="music-player-area">
-            <h2>Reproduciendo Ahora</h2>
-            <div id="current-track">Selecciona una canción</div>
-            <audio id="player" controls controlsList="nodownload" controls style="width: 100%; margin-top: 15px;"></audio>
-        </section>
-
-        <section class="song-list-area">
-            <h2>Tu Biblioteca ÍxMusic</h2>
-            <ul id="song-list">
-                ${songs.map(song => `
-                    <li data-storage-ref="${song.id}" 
-                        data-title="${song.nombre}"
-                        onclick="playSong(this)">
-                        ${song.nombre} - ${song.autor}
-                    </li>
-                `).join('')}
-            </ul>
-        </section>
+    // Genera el HTML de la lista de canciones
+    const listHTML = `
+        <ul id="song-list" class="song-list-ul">
+            ${songs.map((song, index) => `
+                <li class="song-list-item" 
+                    data-index="${index}" 
+                    onclick="handleSongClick(${index})">
+                    <span class="song-title">${song.nombre}</span>
+                    <span class="song-artist">${song.autor || 'Artista Desconocido'}</span>
+                    <span class="song-play-icon">▶</span>
+                </li>
+            `).join('')}
+        </ul>
     `;
-
-    // Inicializar el objeto de audio una vez que la estructura está en el DOM
-    window.playerElement = document.getElementById('player');
-}
-// -----------------------------------------------------
-// --- 4. FUNCIÓN PARA REPRODUCIR LA CANCIÓN (VERSIÓN FINAL Y OPTIMIZADA) ---
-async function playSong(listItem) {
-    // 1. Lectura de la RUTA DE STORAGE (Ej: 'musica/nombre_del_archivo.mp3')
-    const storageRefPath = listItem.getAttribute('data-storage-ref'); 
-    const title = listItem.getAttribute('data-title');
     
-    // Verificación de la ruta
+    // Sobreescribe el placeholder de "Cargando música..."
+    songListContainer.innerHTML = listHTML;
+}
+
+
+// -----------------------------------------------------
+// --- 3. LÓGICA DE REPRODUCCIÓN ---
+// -----------------------------------------------------
+
+// Función global llamada al hacer click en un elemento de la lista
+window.handleSongClick = async function(index) {
+    if (index === currentSongIndex) {
+        togglePlayPause(); // Si es la misma, solo cambia Play/Pause
+        return;
+    }
+    
+    currentSongIndex = index;
+    await playSong(songs[currentSongIndex]);
+};
+
+async function playSong(song) {
+    const storageRefPath = song.storageRef; // Asume que la propiedad es 'storageRef'
+    
     if (!storageRefPath) {
-        console.error("Error: La ruta de Storage (data-storage-ref) está vacía.");
-        alert("Fallo al obtener la ruta del archivo de la lista.");
+        console.error("Error: storageRefPath está vacío para la canción:", song);
         return; 
     }
     
-    // 2. Obtener la URL de streaming desde Firebase Storage
     try {
-        // La ruta ya está completa y lista para usarse
+        // 1. Obtener la URL de streaming desde Firebase Storage
         const fileRef = storage.refFromURL(storageRefPath);
-        const url = await fileRef.getDownloadURL(); // ¡Obteniendo la URL de streaming!
+        const url = await fileRef.getDownloadURL(); 
         
-        // 3. Reproducción
-        window.playerElement.src = url;
-        await window.playerElement.play(); 
+        // 2. Cargar la URL en el elemento de audio fijo
+        audioPlayerElement.src = url;
+        audioPlayerElement.load();
         
-        // 4. Actualizar la interfaz
-        document.getElementById('current-track').textContent = `Reproduciendo: ${title}`;
-        document.querySelectorAll('#song-list li').forEach(li => li.classList.remove('active'));
-        listItem.classList.add('active');
-
+        // 3. Reproducir y actualizar estado
+        await audioPlayerElement.play(); 
+        isPlaying = true;
+        updatePlayerUI(song);
+        updateSongListHighlight();
+        
     } catch (error) {
-        console.error("Error con Firebase Storage:", error);
-        alert("Fallo al obtener la URL. Revise las reglas de Storage y asegúrese de que la ruta del archivo sea correcta.");
+        console.error("Error al obtener la URL o reproducir:", error);
+        alert("Fallo al cargar el archivo. Verifique la ruta de Storage.");
+        isPlaying = false;
+        updatePlayPauseButton();
     }
 }
-// ---------------------------------------------------------------------------------
+
+function togglePlayPause() {
+    if (!audioPlayerElement.src) {
+        // Si no hay canción cargada, intenta reproducir la primera si existe
+        if (songs.length > 0 && currentSongIndex === -1) {
+            currentSongIndex = 0;
+            handleSongClick(currentSongIndex);
+        }
+        return;
+    }
+
+    if (isPlaying) {
+        audioPlayerElement.pause();
+    } else {
+        audioPlayerElement.play();
+    }
+    isPlaying = !isPlaying;
+    updatePlayPauseButton();
+}
+
+// -----------------------------------------------------
+// --- 4. CONTROLADORES DE LA INTERFAZ FIJA ---
+// -----------------------------------------------------
+
+function updatePlayerUI(song) {
+    titleSpan.textContent = song.nombre;
+    artistSpan.textContent = song.autor || 'Artista Desconocido';
+    
+    // Usar la portada por defecto si no hay una url de portada en los datos
+    const coverUrl = song.coverUrl || '../../../recursos/imagenes/default-cover.jpg'; 
+    playerCover.src = coverUrl;
+    
+    updatePlayPauseButton();
+}
+
+function updatePlayPauseButton() {
+    // Cambia el icono del botón ▶ (Play) o ⏸ (Pause)
+    playPauseBtn.textContent = isPlaying ? '⏸' : '▶';
+}
+
+function updateSongListHighlight() {
+    document.querySelectorAll('.song-list-item').forEach(li => {
+        li.classList.remove('active');
+        // Restablece el icono de reproducción
+        li.querySelector('.song-play-icon').textContent = '▶';
+    });
+    
+    const activeItem = document.querySelector(`.song-list-item[data-index="${currentSongIndex}"]`);
+    if (activeItem) {
+        activeItem.classList.add('active');
+        // Si está activa y reproduciendo, muestra el icono de pausa
+        activeItem.querySelector('.song-play-icon').textContent = isPlaying ? '⏸' : '▶';
+    }
+}
+
+// -----------------------------------------------------
+// --- 5. MANEJO DE EVENTOS DEL REPRODUCTOR FIJO ---
+// -----------------------------------------------------
+
+function setupPlayerControls() {
+    // Evento Principal: Play/Pause
+    playPauseBtn.addEventListener('click', togglePlayPause);
+
+    // Evento de Navegación: Siguiente
+    nextBtn.addEventListener('click', () => {
+        if (songs.length > 0) {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            playSong(songs[currentSongIndex]);
+        }
+    });
+
+    // Evento de Navegación: Anterior
+    prevBtn.addEventListener('click', () => {
+        if (songs.length > 0) {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            playSong(songs[currentSongIndex]);
+        }
+    });
+
+    // Evento: Audio cargado (para establecer el tiempo total)
+    audioPlayerElement.addEventListener('loadedmetadata', () => {
+        const totalMinutes = Math.floor(audioPlayerElement.duration / 60);
+        const totalSeconds = Math.floor(audioPlayerElement.duration % 60).toString().padStart(2, '0');
+        timeTotalSpan.textContent = `${totalMinutes}:${totalSeconds}`;
+        seekBar.max = audioPlayerElement.duration;
+    });
+
+    // Evento: Actualizar tiempo y barra de progreso
+    audioPlayerElement.addEventListener('timeupdate', () => {
+        if (!isNaN(audioPlayerElement.duration)) {
+            seekBar.value = audioPlayerElement.currentTime;
+            const currentMinutes = Math.floor(audioPlayerElement.currentTime / 60);
+            const currentSeconds = Math.floor(audioPlayerElement.currentTime % 60).toString().padStart(2, '0');
+            timeCurrentSpan.textContent = `${currentMinutes}:${currentSeconds}`;
+        }
+    });
+
+    // Evento: Seek Bar (el usuario mueve el slider)
+    seekBar.addEventListener('input', () => {
+        audioPlayerElement.currentTime = seekBar.value;
+    });
+
+    // Evento: Final de la canción (reproducir la siguiente)
+    audioPlayerElement.addEventListener('ended', () => {
+        if (songs.length > 0) {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            playSong(songs[currentSongIndex]);
+        } else {
+            isPlaying = false;
+            updatePlayPauseButton();
+            updateSongListHighlight();
+        }
+    });
+
+    // Eventos para mantener el estado visual sincronizado
+    audioPlayerElement.addEventListener('play', () => {
+        isPlaying = true;
+        updatePlayPauseButton();
+        updateSongListHighlight();
+    });
+    audioPlayerElement.addEventListener('pause', () => {
+        isPlaying = false;
+        updatePlayPauseButton();
+        updateSongListHighlight();
+    });
+}

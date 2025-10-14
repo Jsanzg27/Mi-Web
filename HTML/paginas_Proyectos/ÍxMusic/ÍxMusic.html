@@ -33,7 +33,7 @@
     <header class="ixmusic-header">
         <div class="header-content">
             <img src="../../../recursos/imagenes/ÍxMusic/logo.png" alt="Logo">
-            <h1>Bienvenido a <span class="colorlila">Íx</span>Music</h1>
+            <h1>Bienvenido a <span class="colorlila">Íx</span>Music2</h1>
             <p>Tu música, tu estilo. Escucha sin límites, estés donde estés.</p>
             <a href="#descargar" class="ixmusic-btn">Descargar APK</a>
         </div>
@@ -71,7 +71,26 @@
             <a class="ixmusic-btn" href="../../../recursos/apk/ÍxMusic.apk" download>📥 Descargar APK</a>
         </section>
     </main>
-
+    <div id="player-bar" class="fixed-player">
+        <div class="song-info">
+            <img src="../../../recursos/imagenes/default-cover.jpg" alt="Carátula" class="player-cover">
+            <div class="text-info">
+                <span class="player-title">Ninguna Canción</span>
+                <span class="player-artist">Selecciona una para empezar</span>
+            </div>
+        </div>
+        <div class="controls">
+            <button id="prev-btn">⏮</button>
+            <button id="play-pause-btn" class="play">▶</button>
+            <button id="next-btn">⏭</button>
+        </div>
+        <div class="progress-bar">
+            <span class="time-current">0:00</span>
+            <input type="range" id="seek-bar" value="0" min="0" max="100">
+            <span class="time-total">0:00</span>
+        </div>
+        <audio id="audio-player"></audio>
+    </div>
     <footer>
         <p>© 2025 Javier Sanz González. Todos los derechos reservados.</p>
     </footer>
