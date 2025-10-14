@@ -42,7 +42,7 @@ const artistSpan = document.querySelector('.player-artist');
 const timeCurrentSpan = document.querySelector('.time-current');
 const timeTotalSpan = document.querySelector('.time-total');
 const playerCover = document.querySelector('.player-cover');
-const songListContainer = document.getElementById('song-list-container');
+const songListContainer = document.getElementById('app-container');
 
 
 // -----------------------------------------------------
