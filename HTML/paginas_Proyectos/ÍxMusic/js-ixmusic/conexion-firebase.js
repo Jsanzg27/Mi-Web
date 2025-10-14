@@ -11,6 +11,14 @@ const firebaseConfig = {
 };
 
 // -----------------------------------------------------
+// --- INICIALIZACIÓN DE FIREBASE ---
+// -----------------------------------------------------
+// ¡IMPORTANTE! Asegúrate de que 'firebaseConfig' esté definido en una etiqueta <script> en tu HTML 
+// antes de este archivo.
+const app = firebase.initializeApp(firebaseConfig); 
+
+
+// -----------------------------------------------------
 // --- VARIABLES DE ESTADO Y REFERENCIAS DEL DOM ---
 // -----------------------------------------------------
 
