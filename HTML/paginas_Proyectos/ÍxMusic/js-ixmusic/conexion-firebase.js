@@ -178,7 +178,7 @@ function updatePlayerUI(song) {
     artistSpan.textContent = song.autor || 'Artista Desconocido';
     
     // Usar la portada por defecto si no hay una url de portada en los datos
-    const coverUrl = song.coverUrl || '../../../recursos/imagenes/default-cover.jpg'; 
+    const coverUrl = song.coverUrl || '../../../../recursos/imagenes/ÍxMusic/logo.png'; 
     playerCover.src = coverUrl;
     
     updatePlayPauseButton();
