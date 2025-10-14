@@ -120,7 +120,7 @@ window.handleSongClick = async function(index) {
 };
 
 async function playSong(song) {
-    const storageRefPath = song.storageRef; // Asume que la propiedad es 'storageRef'
+    const storageRefPath = song.id; // Asume que la propiedad es 'storageRef'
     
     if (!storageRefPath) {
         console.error("Error: storageRefPath está vacío para la canción:", song);
