@@ -135,7 +135,7 @@ section h2 {
 
 .gallery {
     display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Layout responsivo */
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
     gap: 1.5rem;
     padding-top: 1rem;
 }
@@ -498,4 +498,28 @@ footer {
     .controls {
         width: auto;
     }
+}
+/* ========================================= */
+/* 11. AJUSTES DE ALTURA DE SECCIONES */
+/* ========================================= */
+
+/* Reducir el padding de la Galería de Pantallazos */
+.ixmusic-gallery {
+    /* Mantener el fondo, pero reducir el padding vertical de 3rem a 2rem */
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    /* Asegurarse de que el padding horizontal siga siendo 2rem (o simplemente usar padding: 2rem 2rem) */
+    padding-left: 2rem;
+    padding-right: 2rem;
+    
+    /* Si quieres reducirlo aún más, usa 1.5rem o 1rem */
+}
+
+/* Reducir el padding de la Sección de Descarga */
+.ixmusic-descarga {
+    /* Mantener el fondo, pero reducir el padding vertical de 3rem a 2rem */
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
