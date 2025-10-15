@@ -1,7 +1,7 @@
 // --- 1. CONFIGURACIÓN DE FIREBASE (en funciones.js) ---
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyD3SA3BQS6lHgCJmvxjsxi_S_T_IA_co34",
+    apiKey: "AIzaSyC0sWdWQOTsAKcYTsKM-iIwN1M2HWqaD04",
     authDomain: "music-1c06a.firebaseapp.com",
     projectId: "music-1c06a",
     storageBucket: "music-1c06a.firebasestorage.app",
