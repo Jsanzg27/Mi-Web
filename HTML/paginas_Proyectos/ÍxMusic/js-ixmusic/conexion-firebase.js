@@ -81,25 +81,46 @@ loadSongs();
 // --- 2. RENDERIZADO DE LA LISTA EN EL #song-list-container ---
 // -----------------------------------------------------
 
-function renderSongList() {
-    if (!songListContainer) return;
+// -----------------------------------------------------
+// --- 2. RENDERIZADO DE LA LISTA EN EL #app-container ---
+// -----------------------------------------------------
 
-    // Genera el HTML de la lista de canciones
+function renderSongList() {
+     if (!songListContainer) return;
+
+    // 💡 CAMBIO: Generamos el título y el nuevo contenedor con scroll
     const listHTML = `
-        <ul id="song-list" class="song-list-ul">
-            ${songs.map((song, index) => `
-                <li class="song-list-item" 
-                    data-index="${index}" 
-                    onclick="handleSongClick(${index})">
-                    <span class="song-title">${song.nombre}</span>
-                    <span class="song-artist">${song.autor || 'Artista Desconocido'}</span>
-                    <span class="song-play-icon">▶</span>
-                </li>
-            `).join('')}
-        </ul>
+        <h2>Catálogo de Canciones</h2>
+        
+        <div id="song-scroll-container" class="song-scroll-wrapper"> 
+            <div id="song-grid" class="song-grid-container">
+                ${songs.map((song, index) => {
+                    // Mantenemos la lógica de la tarjeta de canción intacta
+                    const coverUrl = song.portada || '../../../recursos/imagenes/ÍxMusic/logo.png';
+                    const artist = song.autor || 'Artista Desconocido';
+                    
+                    return `
+                        <div class="song-card" 
+                            data-index="${index}" 
+                            onclick="handleSongClick(${index})">
+                            
+                            <div class="card-cover-wrapper">
+                                <img src="${coverUrl}" alt="Portada de ${song.nombre}" class="card-cover">
+                                <span class="card-play-icon">▶</span>
+                            </div>
+                            
+                            <div class="card-info">
+                                <p class="card-title">${song.nombre}</p>
+                                <p class="card-artist">${artist}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
     `;
     
-    // Sobreescribe el placeholder de "Cargando música..."
+    // Sobreescribe el placeholder
     songListContainer.innerHTML = listHTML;
 }
 
@@ -190,17 +211,19 @@ function updatePlayPauseButton() {
 }
 
 function updateSongListHighlight() {
-    document.querySelectorAll('.song-list-item').forEach(li => {
-        li.classList.remove('active');
-        // Restablece el icono de reproducción
-        li.querySelector('.song-play-icon').textContent = '▶';
+    // 💡 CAMBIO: Busca ahora las nuevas tarjetas con la clase .song-card
+    document.querySelectorAll('.song-card').forEach(card => {
+        card.classList.remove('active');
+        // El ícono flotante se maneja automáticamente con el hover, pero podemos controlarlo:
+        card.querySelector('.card-play-icon').textContent = '▶'; 
     });
     
-    const activeItem = document.querySelector(`.song-list-item[data-index="${currentSongIndex}"]`);
+    // 💡 CAMBIO: Busca la tarjeta activa
+    const activeItem = document.querySelector(`.song-card[data-index="${currentSongIndex}"]`);
     if (activeItem) {
         activeItem.classList.add('active');
         // Si está activa y reproduciendo, muestra el icono de pausa
-        activeItem.querySelector('.song-play-icon').textContent = isPlaying ? '⏸' : '▶';
+        activeItem.querySelector('.card-play-icon').textContent = isPlaying ? '⏸' : '▶';
     }
 }
 

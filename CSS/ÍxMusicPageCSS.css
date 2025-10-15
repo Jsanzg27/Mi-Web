@@ -304,7 +304,164 @@ footer {
 }
 
 /* ========================================= */
-/* 9. MEDIA QUERIES (RESPONSIVO) */
+/* 9. ESTILOS DE LA CUADRÍCULA DE CANCIONES (GRID) */
+/* ========================================= */
+
+.song-grid-container {
+    display: flex;
+    flex-wrap: nowrap;
+    /* Habilitar el scroll horizontal */
+    overflow-x: auto; 
+    overflow-y: hidden; /* Ocultar el scroll vertical */
+    /* Crear columnas flexibles: mínimo 150px, máximo lo que permita el espacio */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    padding: 10px 20px 20px 0; 
+    gap: 20px; /* Espacio entre las tarjetas */
+    padding-bottom: 5px; /* Pequeño espacio al final de la lista */
+}
+
+/* Opcional: Ocultar la barra de scroll predeterminada (Solo para Chrome/Edge/Safari) */
+.song-grid-container::-webkit-scrollbar {
+    height: 8px; /* Altura de la barra horizontal */
+    background-color: #1e1b2e;
+}
+
+.song-grid-container::-webkit-scrollbar-thumb {
+    background-color: var(--color-acento-lila);
+    border-radius: 4px;
+}
+
+.song-card {
+    /* Hace que la tarjeta sea interactiva (como un botón) */
+    cursor: pointer;
+    text-align: left;
+    background-color: var(--color-fondo-intermedio); 
+    padding: 15px;
+    /* 💡 CAMBIO CRÍTICO: Ancho fijo para las tarjetas y evitar que se encojan */
+    flex-shrink: 0; /* Evita que la tarjeta se encoja cuando el espacio es limitado */
+    width: 170px; /* Define el ancho de cada tarjeta (ajusta este valor) */
+    border-radius: 12px;
+    transition: background-color 0.3s, transform 0.2s;
+    position: relative; /* Para posicionar el icono de reproducción */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.song-card:hover {
+    background-color: #28243a; /* Un poco más claro al pasar el ratón */
+    transform: translateY(-4px);
+}
+
+/* Contenedor para mantener la imagen cuadrada */
+.card-cover-wrapper {
+    position: relative;
+    width: 100%;
+    /* Truco para hacer el contenedor cuadrado (aspect ratio 1:1) */
+    padding-bottom: 100%; 
+    margin-bottom: 10px;
+}
+
+.card-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la imagen cubra el área sin deformarse */
+    border-radius: 8px; /* Esquinas redondeadas en la portada */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Información de texto */
+.card-info {
+    padding-top: 5px;
+}
+
+.card-title {
+    margin: 0;
+    color: var(--color-texto-claro);
+    font-weight: bold;
+    font-size: 1rem;
+    /* Recortar texto si es muy largo */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-artist {
+    margin: 2px 0 0;
+    /* Color secundario como pediste */
+    color: var(--color-acento-lila); 
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Icono de Reproducción (el '▶' flotante) */
+.card-play-icon {
+    position: absolute;
+    bottom: 8px; /* Separación del borde inferior de la portada */
+    right: 8px; /* Separación del borde derecho de la portada */
+    background-color: var(--color-acento-lila);
+    color: var(--color-texto-claro);
+    padding: 10px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    line-height: 1;
+    opacity: 0; /* Inicialmente oculto */
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none; /* Asegura que el click pase a la tarjeta */
+}
+
+.song-card:hover .card-play-icon {
+    opacity: 1; /* Mostrar al pasar el ratón */
+    transform: translateY(-5px); /* Efecto de flotación sutil */
+}
+
+
+/* Estilo para la tarjeta activa (opcional pero recomendado) */
+.song-card.active {
+    background-color: #38344e; /* Fondo ligeramente diferente para indicar que está sonando */
+    border: 1px solid var(--color-acento-lila);
+}
+
+/* Opcional: Ajustar el tamaño de las tarjetas en móvil */
+@media (max-width: 600px) {
+    .song-grid-container {
+        /* Permite que las tarjetas ocupen más espacio en pantallas pequeñas */
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+
+/* ========================================= */
+/* ESTILOS DEL CONTENEDOR DE SCROLL INTERNO */
+/* ========================================= */
+
+.song-scroll-wrapper {
+    /* Altura máxima que ocupará esta sección */
+    max-height: 70vh; /* 70% de la altura de la ventana (ajustable) */
+    /* Altura fija si prefieres un valor en píxeles: max-height: 600px; */
+    
+    /* Habilitar el scroll vertical si el contenido excede la altura máxima */
+    overflow-y: auto; 
+    
+    /* Opcional: Estilo para la barra de desplazamiento (solo webkit/Chrome/Edge) */
+    padding-right: 15px; /* Para que la barra de scroll no se superponga al contenido */
+}
+
+/* Opcional: Ocultar la barra de desplazamiento predeterminada y estilizarla */
+.song-scroll-wrapper::-webkit-scrollbar {
+    width: 8px;
+    background-color: #1e1b2e; /* Color del fondo de la barra de scroll */
+    border-radius: 4px;
+}
+
+.song-scroll-wrapper::-webkit-scrollbar-thumb {
+    background-color: var(--color-acento-lila);
+    border-radius: 4px;
+}
+/* ========================================= */
+/* 10. MEDIA QUERIES (RESPONSIVO) */
 /* ========================================= */
 
 @media (max-width: 1024px) {
