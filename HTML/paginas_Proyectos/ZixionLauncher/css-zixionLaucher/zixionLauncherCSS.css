@@ -1,0 +1,129 @@
+/* ========================================= */
+/* VARIABLES DEL TEMA MINIMALISTA ZIXION     */
+/* ========================================= */
+:root {
+    --zixion-bg-dark: #000000;       /* Fondo negro puro como el launcher */
+    --zixion-bg-card: #0a0a0a;       /* Gris súper oscuro para las tarjetas */
+    --zixion-border: #222222;        /* Color para bordes sutiles */
+    --zixion-accent: #ffffff;        /* Acento blanco puro */
+    --zixion-accent-hover: #cccccc;  /* Gris claro para hover */
+    --zixion-text-light: #888888;    /* Texto gris para descripciones */
+    --zixion-text-white: #ffffff;    /* Texto blanco puro para títulos */
+}
+
+/* ========================================= */
+/* SOBRESCRITURA DE ESTILOS GLOBALES         */
+/* ========================================= */
+
+/* Cambiamos el fondo general de la página */
+body {
+    background-color: var(--zixion-bg-dark);
+    color: var(--zixion-text-light);
+}
+
+/* Títulos de la cabecera */
+header h1 {
+    color: var(--zixion-text-white);
+    letter-spacing: 2px; /* Le da un toque más elegante y amplio */
+    text-transform: uppercase; /* Opcional: Para que ponga ZIXIONLAUNCHER en mayúsculas */
+}
+
+header p {
+    color: var(--zixion-text-light);
+}
+
+/* ========================================= */
+/* TARJETAS DEL PROYECTO (components.css)    */
+/* ========================================= */
+
+/* Sobrescribimos el fondo de las tarjetas */
+.text, .image-container {
+    background-color: var(--zixion-bg-card);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8); /* Sombra negra intensa */
+    border: 1px solid var(--zixion-border);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+/* Efecto sutil al pasar el ratón por las tarjetas */
+.text:hover, .image-container:hover {
+    transform: translateY(-5px);
+    border-color: var(--zixion-text-white);
+}
+
+.text h2 {
+    color: var(--zixion-text-white);
+}
+
+.text p {
+    color: var(--zixion-text-light);
+}
+
+/* ========================================= */
+/* SECCIÓN DE DESCARGA                       */
+/* ========================================= */
+
+.contact-section {
+    background-color: var(--zixion-bg-card);
+    border-top: 3px solid var(--zixion-accent); /* Línea decorativa superior blanca */
+    border-bottom: 1px solid var(--zixion-border);
+    border-left: 1px solid var(--zixion-border);
+    border-right: 1px solid var(--zixion-border);
+    max-width: 800px; /* Para que no ocupe todo el ancho */
+    margin: 40px auto; /* Centrado */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+}
+
+.contact-section h2 {
+    color: var(--zixion-text-white);
+}
+
+.contact-section p {
+    color: var(--zixion-text-light);
+    margin-bottom: 30px;
+}
+
+/* ========================================= */
+/* BOTÓN DE DESCARGA MINIMALISTA             */
+/* ========================================= */
+
+.contact-section .btn-descarga {
+    display: inline-block;
+    background-color: transparent;
+    color: var(--zixion-text-white);
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 15px 40px;
+    border: 2px solid var(--zixion-accent);
+    border-radius: 0px; /* Bordes rectos para imitar tu botón JUGAR */
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-descarga:hover {
+    background-color: var(--zixion-accent);
+    color: var(--zixion-bg-dark);
+    transform: scale(1.05);
+}
+
+/* ========================================= */
+/* ARREGLO DEL CONTENEDOR PRINCIPAL          */
+/* ========================================= */
+
+.containerProject {
+    display: block; 
+    max-width: 1000px;
+    margin: 80px auto 0 auto;
+}
+
+.pair {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+}
+
+.image-container {
+    width: 60%; 
+}
