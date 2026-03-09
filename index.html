@@ -4,66 +4,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Currículum de Javier</title>
+    <title>Javier Sanz González - Desarrollador Multiplataforma</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="CSS/global.css">
-    <link rel="stylesheet" href="CSS/layout.css">
-    <link rel="stylesheet" href="CSS/components.css">
-    <link rel="stylesheet" href="CSS/responsive.css">
-    <script src="JS/funciones.js" defer></script>
 </head>
 
-<!--<body>
-    <nav class="top-bar">
-        <span class="menu-icon" onclick="toggleMenu()">&#9776;</span>
-        <span class="site-name">Íxion</span>
+<body class="bg-light d-flex flex-column min-vh-100">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#">Íxion</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="index.html">Sobre mí</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="HTML/Mis_Proyectos.html">Mis Proyectos</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </nav>
 
-    <div id="side-menu" class="side-menu">
-        <ul>
-            <li><a href="index.html">Sobre mí</a></li>
-            <li><a href="HTML/Mis_Proyectos.html">Mis Proyectos</a></li>
-        </ul>
-    </div>
-
-    <header>
-        <h1>Javier Sanz González</h1>
-        <p>Desarrollador de Software | Desarrollo de Aplicaciones Multiplataforma</p>
+    <header class="container text-center mt-5 mb-4">
+        <img src="recursos/imagenes/foto_perfil.jpg" alt="Javier Sanz" class="rounded-circle mb-3 shadow-sm" style="width: 150px; height: 150px; object-fit: cover; display: none;"> <h1 class="display-4 text-dark fw-bold mb-2">Javier Sanz González</h1>
+        <p class="lead text-primary fw-medium mb-2">Desarrollador de Aplicaciones Multiplataforma</p>
+        <p class="text-secondary"><small>Mérida, Badajoz</small></p>
     </header>
 
-    <div class="about-me">
-        <p>Soy una persona apasionada por el desarrollo de software, desde pequeño siempre me llamó 
-            la atención el mundo de la programación y es lo que he acabado estudiando, disfruto creando 
-            aplicaciones y aprendiendo nuevas tecnologías que me permitan hacer más cosas.</p>
-    </div>
-
-    <div class="container">
-        <div class="card scrollable">
-            <h2>Habilidades</h2>
-            <ul>
-                <li>Lenguajes de programación: Java, JavaFX, C, Python, HTML, CSS</li>
-                <li>Base de datos: MySQL, MariaDB, MongoDB</li>
-                <li>IDE: Eclipse, IntelliJ, Visual Studio Code, Android Studio</li>
-                <li>Herramientas: Git, Firebase, Google Auth</li>
-                <li>Accesibilidad: Interfaces Naturales</li>
-            </ul>
+    <section class="container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-9 text-center">
+                <p class="lead text-secondary" style="font-size: 1.15rem; line-height: 1.7;">
+                    Técnico Superior con un perfil fuertemente orientado al producto final y al aprendizaje continuo. Disfruto diseñando y construyendo proyectos desde cero, gestionando tanto el código como su puesta en producción. Busco integrarme en un equipo dinámico donde pueda aplicar mi iniciativa, mis conocimientos prácticos y mi pasión por el desarrollo de software.
+                </p>
+            </div>
         </div>
-
-        <div class="card scrollable">
-            <h2>Experiencia</h2>
-            <p> - Desarrollo de una aplicación de reproducción de música (ÍxMusic)</p>
-            <p> - Desarrollo de un prototipo de juego sencillo hecho en java. </p>
-        </div>
-    </div>
-
-    <section class="contact-section">
-        <h2>Contacto</h2>
-        <p>Correo: <a href="mailto:jsanzg27@gmail.com">jsanzg27@gmail.com</a></p>
-        <p>Teléfono: 634278051</p>
     </section>
 
-    <footer>
-        <p>© 2025 Javier Sanz González. Todos los derechos reservados.</p>
+    <section class="container mb-5">
+        <div class="row g-4">
+            
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body p-4">
+                        <h2 class="h4 text-dark mb-4 border-bottom pb-2">Educación</h2>
+                        
+                        <div class="mb-4">
+                            <h3 class="h6 fw-bold text-dark mb-1">CFGS en Desarrollo de Aplicaciones Multiplataforma</h3>
+                            <p class="text-secondary small mb-0">I.E.S Albarregas</p>
+                            <span class="badge bg-primary bg-opacity-10 text-primary mt-1">Promoción 2025</span>
+                        </div>
+                        
+                        <div>
+                            <h3 class="h6 fw-bold text-dark mb-1">Bachillerato</h3>
+                            <p class="text-secondary small mb-0">I.E.S Albarregas</p>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary mt-1">2022</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body p-4">
+                        <h2 class="h4 text-dark mb-4 border-bottom pb-2">Habilidades Técnicas</h2>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <h3 class="h6 fw-bold text-dark">Lenguajes</h3>
+                                <p class="text-secondary small mb-0">Java, Python, HTML, CSS</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h3 class="h6 fw-bold text-dark">Frameworks y Librerías</h3>
+                                <p class="text-secondary small mb-0">React, JavaFX, Spring Boot, Retrofit, Glide</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h3 class="h6 fw-bold text-dark">Bases de Datos</h3>
+                                <p class="text-secondary small mb-0">MySQL, MariaDB, MongoDB</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h3 class="h6 fw-bold text-dark">Cloud & Infraestructura</h3>
+                                <p class="text-secondary small mb-0">Ubuntu Server, Docker, Firebase</p>
+                            </div>
+                            <div class="col-md-12 mt-3 pt-2 border-top">
+                                <h3 class="h6 fw-bold text-dark">Herramientas y Entornos</h3>
+                                <p class="text-secondary small mb-0">Git, Android Studio, Eclipse, IntelliJ, VS Code</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="container mb-5">
+        <div class="card shadow-sm border-0 text-light rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #1f2937 0%, #111827 100%);">
+            <div class="card-body p-5 text-center">
+                <h2 class="h3 fw-bold mb-3">De la idea a la producción</h2>
+                <p class="mb-4 text-light text-opacity-75 mx-auto" style="max-width: 700px; font-size: 1.1rem;">
+                    No solo escribo código. Construyo proyectos reales y me encargo de toda su infraestructura. El backend y los despliegues de mis aplicaciones operan y son gestionados en mi propio servidor.
+                </p>
+                <a href="HTML/Mis_Proyectos.html" class="btn btn-primary btn-lg px-5 shadow rounded-pill">Ver mis proyectos en acción</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white border-top py-5 text-center mt-auto">
+        <div class="container">
+            <h2 class="h4 text-dark mb-4">¿Hablamos?</h2>
+            <div class="d-flex justify-content-center gap-4 flex-wrap">
+                <a href="mailto:jsanzg27@gmail.com" class="text-decoration-none text-secondary hover-primary">jsanzg27@gmail.com</a>
+                <span class="text-secondary">|</span>
+                <!--<span class="text-secondary">634 27 80 51</span>
+                <span class="text-secondary d-none d-sm-inline">|</span>-->
+                <a href="#" class="text-decoration-none text-secondary hover-primary">Mi LinkedIn</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="text-center py-4 bg-light text-muted">
+        <div class="container">
+            <small>© 2025 Javier Sanz González. Todos los derechos reservados.</small>
+        </div>
     </footer>
-</body>-->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 
 </html>

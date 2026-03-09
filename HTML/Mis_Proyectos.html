@@ -5,53 +5,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Proyectos - Javier Sanz González</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../CSS/global.css">
-    <link rel="stylesheet" href="../CSS/layout.css">
-    <link rel="stylesheet" href="../CSS/components.css">
-    <link rel="stylesheet" href="../CSS/responsive.css">
-    <script src="../JS/funciones.js" defer></script>
 </head>
 
-<body>
-    <nav class="top-bar">
-        <span class="menu-icon" onclick="toggleMenu()">&#9776;</span>
-        <span class="site-name">Íxion</span>
+<body class="bg-light d-flex flex-column min-vh-100"> <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">Íxion</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Sobre mí</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="Mis_Proyectos.html">Mis Proyectos</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </nav>
 
-    <div id="side-menu" class="side-menu">
-        <ul>
-            <li><a href="../index.html">Sobre mí</a></li>
-            <li><a href="Mis_Proyectos.html">Mis Proyectos</a></li>
-        </ul>
-    </div>
-
-    <header>
-        <h1>Mis Proyectos</h1>
-        <p>Proyectos propios, personales y comerciales</p>
+    <header class="container text-center mt-5 mb-5">
+        <h1 class="display-4 text-dark fw-bold">Mis Proyectos</h1>
+        <p class="lead text-secondary">Proyectos propios, personales y comerciales</p>
     </header>
 
-    <div class="container">
-        <!-- Proyecto 1 -->
-        <div class="titulosProyectos">
-            <h2><a href="paginas_Proyectos/Abyss.html">The adventurer</a></h2>
-            <img src="../recursos/imagenes/Abyss/Abyss.png" alt="" class="project-image">
-            <p>Juego sencillo desarrollado originalmente solo con java, posteriormente fue transformado 
-                en un proyecto de javaFX para que tuviese interfaz gráfica</p>
+    <main class="container mb-5 flex-grow-1">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 project-card">
+                    <img src="../recursos/imagenes/Abyss/Abyss.png" class="card-img-top p-4 bg-white" alt="The adventurer" style="object-fit: contain; height: 220px;">
+                    <div class="card-body d-flex flex-column">
+                        <h2 class="h5 card-title text-dark">Abyss</h2>
+                        <p class="card-text text-secondary flex-grow-1">Juego sencillo desarrollado originalmente solo con java, posteriormente fue transformado en un proyecto de javaFX para que tuviese interfaz gráfica.</p>
+                        <a href="paginas_Proyectos/Abyss/Abyss.html" class="btn btn-outline-primary mt-3 w-100">Ver detalles</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 project-card">
+                    <img src="../recursos/imagenes/ÍxMusic/logo.png" class="card-img-top p-4 bg-white" alt="ÍxMusic logo" style="object-fit: contain; height: 220px;">
+                    <div class="card-body d-flex flex-column">
+                        <h2 class="h5 card-title text-dark">ÍxMusic</h2>
+                        <p class="card-text text-secondary flex-grow-1">Una aplicación móvil de reproducción de música con streaming rápido desde Firebase y guardado de canciones.</p>
+                        <a href="paginas_Proyectos/ÍxMusic/ÍxMusic.html" class="btn btn-outline-primary mt-3 w-100">Ver detalles</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 project-card">
+                    <img src="../recursos/imagenes/ZixionLauncher/logo.png" class="card-img-top p-4 bg-white" alt="ZixionLauncher logo" style="object-fit: contain; height: 220px;">
+                    <div class="card-body d-flex flex-column">
+                        <h2 class="h5 card-title text-dark">ZixionLauncher</h2>
+                        <p class="card-text text-secondary flex-grow-1">Un launcher de videojuegos de escritorio ligero y rápido para organizar toda tu biblioteca sin distracciones.</p>
+                        <a href="paginas_Proyectos/ZixionLauncher/ZixionLauncher.html" class="btn btn-outline-primary mt-3 w-100">Ver detalles</a>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <div class="titulosProyectos">
-            <h2><a href="paginas_Proyectos/ÍxMusic/ÍxMusic.html">ÍxMusic</a></h2>
-            <img src="../recursos/imagenes/ÍxMusic/logo.png" alt="" class="project-image">
-            <p>Una aplicación móvil de reproducción de música</p>
+    </main>
+
+    <footer class="text-center py-4 text-muted bg-white border-top">
+        <div class="container">
+            <small>© 2025 Javier Sanz González. Todos los derechos reservados.</small>
         </div>
-        <div class="titulosProyectos">
-            <h2><a href="paginas_Proyectos/ZixionLauncher/ZixionLauncher.html">ZixionLauncher</a></h2>
-            <img src="../recursos/imagenes/ZixionLauncher/logo.png" alt="Logo ZixionLauncher" class="project-image">
-            <p>Un launcher de videojuegos de escritorio ligero y rápido para organizar toda tu biblioteca.</p>
-        </div>
-    </div>
-    <footer>
-        <p>© 2025 Javier Sanz González. Todos los derechos reservados.</p>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

@@ -4,79 +4,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ÍxMusic</title>
+    <title>ÍxMusic - Javier Sanz González</title>
     <link rel="icon" href="../../../recursos/imagenes/ÍxMusic/logo.png">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <link rel="stylesheet" href="../../../CSS/global.css">
-    <link rel="stylesheet" href="../../../CSS/layout.css">
-    <link rel="stylesheet" href="../../../CSS/components.css">
-    <link rel="stylesheet" href="../../../CSS/responsive.css">
-    <link rel="stylesheet" href="../../../CSS/ÍxMusicPageCSS.css">
+    <link rel="stylesheet" href="css-ixMusic/ÍxMusicPageCSS.css">
+    
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-    <script src="../../../JS/funciones.js" defer></script>
+    
     <script src="js-ixmusic/conexion-firebase.js" defer></script>
 </head>
 
-<body>
-    <nav class="top-bar">
-        <span class="menu-icon" onclick="toggleMenu()">&#9776;</span>
-        <span class="site-name">Íxion</span>
+<body class="bg-dark text-light d-flex flex-column min-vh-100" style="padding-bottom: 90px;">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black sticky-top shadow-sm border-bottom border-secondary">
+        <div class="container">
+            <a class="navbar-brand" href="../../../index.html">Íxion</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../../../index.html">Sobre mí</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="../../Mis_Proyectos.html">Mis Proyectos</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </nav>
 
-    <div id="side-menu" class="side-menu">
-        <ul>
-            <li><a href="../../../index.html">Sobre mí</a></li>
-            <li><a href="../../Mis_Proyectos.html">Mis Proyectos</a></li>
-        </ul>
-    </div>
-
-    <header class="ixmusic-header">
-        <div class="header-content">
-            <img src="../../../recursos/imagenes/ÍxMusic/logo.png" alt="Logo">
-            <h1>Bienvenido a <span class="colorlila">Íx</span>Music</h1>
-            <p>Tu música, tu estilo. Escucha sin límites, estés donde estés.</p>
-            <a href="#descargar" class="ixmusic-btn">Descargar APK</a>
-        </div>
+    <header class="container text-center py-5 mt-4 mb-5 rounded-4 shadow" style="background-color: rgba(0, 0, 0, 0.4);">
+        <img src="../../../recursos/imagenes/ÍxMusic/logo.png" alt="Logo" class="mb-3 img-fluid" style="max-width: 120px;">
+        <h1 class="display-4 fw-bold">Bienvenido a <span style="color: #7e5bef;">Íx</span>Music</h1>
+        <p class="lead text-secondary mx-auto" style="max-width: 600px;">Tu música, tu estilo. Escucha sin límites, estés donde estés.</p>
+        <a href="#descargar" class="btn btn-lg mt-3 fw-bold shadow-sm" style="background-color: #7e5bef; color: white; transition: transform 0.2s;">Descargar APK</a>
     </header>
 
-    <main>
-        <!-- Galería de pantallazos -->
-        <section class="ixmusic-gallery">
-            <h2>¿Qué ofrece ÍxMusic?</h2>
-            <div class="gallery">
-                <img src="../../../recursos/imagenes/ÍxMusic/muestra-principal.jpg" alt="Pantalla de inicio">
-                <img src="../../../recursos/imagenes/ÍxMusic/muestra-lista.jpg" alt="Lista de reproducción">
-                <img src="../../../recursos/imagenes/ÍxMusic/muestra-reproductor.jpg" alt="Reproductor activo">
-                <img src="../../../recursos/imagenes/ÍxMusic/muestra-cancion.jpg" alt="Información de la canción">
+    <main class="container flex-grow-1">
+        
+        <section class="mb-5 p-4 rounded-4 shadow" style="background-color: #1e1b2e;">
+            <h2 class="h3 mb-4 text-center" style="color: #7e5bef;">¿Qué ofrece ÍxMusic?</h2>
+            <div class="row row-cols-2 row-cols-md-4 g-4 text-center">
+                <div class="col"><img src="../../../recursos/imagenes/ÍxMusic/muestra-principal.jpg" class="img-fluid rounded shadow-sm border border-secondary" alt="Pantalla de inicio"></div>
+                <div class="col"><img src="../../../recursos/imagenes/ÍxMusic/muestra-lista.jpg" class="img-fluid rounded shadow-sm border border-secondary" alt="Lista de reproducción"></div>
+                <div class="col"><img src="../../../recursos/imagenes/ÍxMusic/muestra-reproductor.jpg" class="img-fluid rounded shadow-sm border border-secondary" alt="Reproductor activo"></div>
+                <div class="col"><img src="../../../recursos/imagenes/ÍxMusic/muestra-cancion.jpg" class="img-fluid rounded shadow-sm border border-secondary" alt="Información de la canción"></div>
             </div>
         </section>
 
-        <!-- Características -->
-        <section class="ixmusic-caracteristicas">
-            <h2>Características principales</h2>
-            <ul>
-                <li>🎵 Reproduce música desde Firebase con streaming rápido.</li>
-                <li>🌙 Interfaz moderna, oscura y con gradientes suaves.</li>
-                <li>🔒 Sin necesidad de registrarse para explorar.</li>
-                <li>📁 Carga y guarda tus propias canciones.</li>
-            </ul>
+        <section class="mb-5 p-4 rounded-4 shadow" style="background-color: #1e1b2e;">
+            <h2 class="h3 mb-4 text-center" style="color: #7e5bef;">Características principales</h2>
+            <div class="row row-cols-1 row-cols-md-2 g-3 justify-content-center">
+                <div class="col-md-5">
+                    <div class="p-3 rounded shadow-sm" style="background-color: #282828;">🎵 Reproduce música desde Firebase con streaming rápido.</div>
+                </div>
+                <div class="col-md-5">
+                    <div class="p-3 rounded shadow-sm" style="background-color: #282828;">🌙 Interfaz moderna, oscura y con gradientes suaves.</div>
+                </div>
+                <div class="col-md-5">
+                    <div class="p-3 rounded shadow-sm" style="background-color: #282828;">🔒 Sin necesidad de registrarse para explorar.</div>
+                </div>
+                <div class="col-md-5">
+                    <div class="p-3 rounded shadow-sm" style="background-color: #282828;">📁 Carga y guarda tus propias canciones.</div>
+                </div>
+            </div>
         </section>
 
-        <section id="app-container"></section>
+        <section id="app-container" class="mb-5 p-4 rounded-4 shadow" style="background-color: #1e1b2e;"></section>
 
-        <!-- Sección de descarga -->
-        <section id="descargar" class="ixmusic-descarga">
-            <h2>Descarga la app</h2>
-            <p>Instala ÍxMusic en tu dispositivo Android y empieza a escuchar ya.</p>
-            <a class="ixmusic-btn" href="../../../recursos/apk/ÍxMusic.apk" download>📥 Descargar APK</a>
+        <section id="descargar" class="mb-5 p-5 rounded-4 shadow text-center" style="background-color: #121212; border: 1px solid #1e1b2e;">
+            <h2 class="h3 mb-3" style="color: #7e5bef;">Descarga la app</h2>
+            <p class="text-secondary mb-4">Instala ÍxMusic en tu dispositivo Android y empieza a escuchar ya.</p>
+            <a class="btn btn-lg fw-bold" href="../../../recursos/apk/ÍxMusic.apk" download style="background-color: #7e5bef; color: white;">📥 Descargar APK</a>
         </section>
+
     </main>
+
     <div id="player-bar" class="fixed-player">
         <div class="song-info">
             <img src="../../../recursos/imagenes/ÍxMusic/logo.png" alt="Carátula" class="player-cover">
-            <div class="text-info">
-                <span class="player-title">Ninguna Canción</span>
+            <div class="text-info d-none d-md-flex flex-column"> <span class="player-title">Ninguna Canción</span>
                 <span class="player-artist">Selecciona una para empezar</span>
             </div>
         </div>
@@ -85,16 +100,21 @@
             <button id="play-pause-btn" class="play">▶</button>
             <button id="next-btn">⏭</button>
         </div>
-        <div class="progress-bar">
+        <div class="player-progress d-none d-md-flex"> 
             <span class="time-current">0:00</span>
             <input type="range" id="seek-bar" value="0" min="0" max="100">
             <span class="time-total">0:00</span>
         </div>
         <audio id="audio-player"></audio>
     </div>
-    <footer>
-        <p>© 2025 Javier Sanz González. Todos los derechos reservados.</p>
+
+    <footer class="text-center py-4 mt-auto border-top border-secondary bg-black">
+        <div class="container">
+            <small class="text-secondary">© 2025 Javier Sanz González. Todos los derechos reservados.</small>
+        </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
