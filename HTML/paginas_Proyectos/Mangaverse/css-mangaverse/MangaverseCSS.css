@@ -1,0 +1,62 @@
+/* ========================================= */
+/* VARIABLES Y TEMA OSCURO (MangaVerse Red)  */
+/* ========================================= */
+:root {
+    --manga-bg-black: #101010;         /* Fondo principal casi negro */
+    --manga-bg-card: #1c1c1c;          /* Fondo de tarjetas */
+    --manga-red-accent: #8b0000;       /* Rojo oscuro de tu cabecera y menú */
+    --manga-red-hover: #b30000;        /* Rojo un poco más claro para hovers */
+    --manga-text-main: #f8f9fa;        /* Texto principal claro */
+    --manga-text-muted: #a0a0a0;       /* Texto secundario */
+    --manga-border: #333333;           /* Bordes sutiles */
+}
+
+/* Aplicamos el tema oscuro al body */
+body.manga-theme {
+    /* Gradiente que empieza en rojo oscuro arriba y funde a negro. 
+       El 'fixed' evita que el gradiente se repita feo al hacer scroll */
+    background: linear-gradient(to bottom, #500000 0%, #101010 400px, #101010 100%) fixed !important;
+    color: var(--manga-text-main) !important;
+}
+
+/* ========================================= */
+/* COMPONENTES REUTILIZABLES                 */
+/* ========================================= */
+
+.manga-section {
+    background-color: var(--manga-bg-card);
+    border: 1px solid var(--manga-border);
+    border-radius: 12px;
+}
+
+/* Títulos con acento rojo */
+.manga-title-accent {
+    color: var(--manga-red-accent);
+}
+
+/* Badges personalizados */
+.manga-badge {
+    background-color: rgba(139, 0, 0, 0.15);
+    color: #ff4d4d; /* Un rojo más brillante para que se lea bien sobre oscuro */
+    border: 1px solid rgba(139, 0, 0, 0.3);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+/* Botones */
+.btn-manga-primary {
+    background-color: var(--manga-red-accent);
+    color: white;
+    border: none;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-manga-primary:hover {
+    background-color: var(--manga-red-hover);
+    color: white;
+}
+
+.manga-border-bottom {
+    border-bottom: 1px solid var(--manga-border) !important;
+}
