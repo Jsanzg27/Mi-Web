@@ -33,7 +33,7 @@
 </head>
 <body>
 
-<div id="info">Ponte el visor y pulsa "ENTER VR" para entrar en tu espacio virtual 🚀</div>
+<div id="info">Ponte el visor y pulsa "ENTER VR" para entrar en tu espacio virtual 🚀<br/>Usa la palanca del mando izquierdo para moverte</div>
 
 <script type="importmap">
 {
@@ -49,15 +49,20 @@ import * as THREE from 'three';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
 
-let scene, camera, renderer;
+let scene, camera, renderer, dolly, clock;
 let controller1, controller2, controllerGrip1, controllerGrip2;
 let controllerModelFactory;
 
-// Objetos que se pueden agarrar
+// Objetos que se pueden agarrar (de momento la sala está vacía)
 const grabbables = [];
 
 // Referencia: qué objeto está agarrando cada controlador ahora mismo
 const grabbedByController = new Map();
+
+// Velocidad de desplazamiento (metros por segundo)
+const MOVE_SPEED = 2.2;
+// Evita reaccionar a ruido del stick cuando está casi en el centro
+const DEADZONE = 0.15;
 
 init();
 animate();
@@ -73,7 +78,16 @@ function init() {
     0.05,
     50
   );
-  camera.position.set(0, 1.6, 3);
+
+  // El "dolly" es el grupo que realmente movemos por el suelo.
+  // La cámara va dentro, y WebXR mueve la cámara respecto al dolly
+  // según la posición real de tu cabeza.
+  dolly = new THREE.Group();
+  dolly.position.set(0, 0, 3);
+  dolly.add(camera);
+  scene.add(dolly);
+
+  clock = new THREE.Clock();
 
   // Luces
   const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444455, 1.2);
@@ -119,48 +133,8 @@ function init() {
   wallRight.rotation.y = -Math.PI / 2;
   scene.add(wallRight);
 
-  // Objetos agarrables: cubos y esferas de colores sobre una mesa
-  const tableGeo = new THREE.BoxGeometry(1.4, 0.05, 0.8);
-  const tableMat = new THREE.MeshStandardMaterial({ color: 0x6b4a2f, roughness: 0.7 });
-  const table = new THREE.Mesh(tableGeo, tableMat);
-  table.position.set(0, 0.75, -0.8);
-  table.castShadow = true;
-  table.receiveShadow = true;
-  scene.add(table);
-
-  const legGeo = new THREE.BoxGeometry(0.05, 0.75, 0.05);
-  const legPositions = [
-    [-0.65, 0.375, -1.15], [0.65, 0.375, -1.15],
-    [-0.65, 0.375, -0.45], [0.65, 0.375, -0.45]
-  ];
-  legPositions.forEach(p => {
-    const leg = new THREE.Mesh(legGeo, tableMat);
-    leg.position.set(...p);
-    leg.castShadow = true;
-    scene.add(leg);
-  });
-
-  const colors = [0xff5c5c, 0x5cb8ff, 0x5cff8a, 0xffe45c, 0xd45cff, 0xff9d5c];
-  for (let i = 0; i < 6; i++) {
-    let mesh;
-    if (i % 2 === 0) {
-      const geo = new THREE.BoxGeometry(0.14, 0.14, 0.14);
-      const mat = new THREE.MeshStandardMaterial({ color: colors[i], roughness: 0.4, metalness: 0.1 });
-      mesh = new THREE.Mesh(geo, mat);
-    } else {
-      const geo = new THREE.SphereGeometry(0.08, 24, 24);
-      const mat = new THREE.MeshStandardMaterial({ color: colors[i], roughness: 0.3, metalness: 0.2 });
-      mesh = new THREE.Mesh(geo, mat);
-    }
-    const col = i % 3;
-    const row = Math.floor(i / 3);
-    mesh.position.set(-0.4 + col * 0.4, 0.85, -0.95 + row * 0.3);
-    mesh.castShadow = true;
-    mesh.userData.grabbable = true;
-    mesh.userData.originalScale = mesh.scale.clone();
-    scene.add(mesh);
-    grabbables.push(mesh);
-  }
+  // Sala vacía por ahora: sin mesa ni objetos.
+  // Más adelante podemos volver a añadir cosas agarrables aquí.
 
   // Renderer con WebXR activado
   renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -189,30 +163,90 @@ function init() {
     return line;
   }
 
+  // Importante: los controladores se añaden al DOLLY, no directamente a la
+  // escena, para que al mover el dolly (locomoción) las manos se muevan
+  // junto con el jugador y no se queden "flotando" en el sitio original.
   controller1 = renderer.xr.getController(0);
   controller1.add(buildController());
   controller1.userData.handedness = 'controller1';
-  scene.add(controller1);
+  dolly.add(controller1);
 
   controller2 = renderer.xr.getController(1);
   controller2.add(buildController());
   controller2.userData.handedness = 'controller2';
-  scene.add(controller2);
+  dolly.add(controller2);
 
   controller1.addEventListener('selectstart', () => onSelectStart(controller1));
   controller1.addEventListener('selectend', () => onSelectEnd(controller1));
   controller2.addEventListener('selectstart', () => onSelectStart(controller2));
   controller2.addEventListener('selectend', () => onSelectEnd(controller2));
 
+  // Nos guardamos qué mano (izquierda/derecha) es cada controlador en
+  // cuanto WebXR nos lo confirma, para saber cuál usar para movernos.
+  controller1.addEventListener('connected', (e) => {
+    controller1.userData.inputSource = e.data;
+  });
+  controller1.addEventListener('disconnected', () => {
+    controller1.userData.inputSource = null;
+  });
+  controller2.addEventListener('connected', (e) => {
+    controller2.userData.inputSource = e.data;
+  });
+  controller2.addEventListener('disconnected', () => {
+    controller2.userData.inputSource = null;
+  });
+
   controllerGrip1 = renderer.xr.getControllerGrip(0);
   controllerGrip1.add(controllerModelFactory.createControllerModel(controllerGrip1));
-  scene.add(controllerGrip1);
+  dolly.add(controllerGrip1);
 
   controllerGrip2 = renderer.xr.getControllerGrip(1);
   controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
-  scene.add(controllerGrip2);
+  dolly.add(controllerGrip2);
 
   window.addEventListener('resize', onWindowResize);
+}
+
+// Busca el gamepad del mando IZQUIERDO entre los dos controladores
+function getLeftGamepad() {
+  const candidates = [controller1, controller2];
+  for (const c of candidates) {
+    const src = c.userData.inputSource;
+    if (src && src.handedness === 'left' && src.gamepad) {
+      return src.gamepad;
+    }
+  }
+  return null;
+}
+
+// Mueve al jugador (el dolly) según la palanca izquierda, en la
+// dirección hacia donde está mirando (locomoción tipo "smooth")
+function handleLocomotion(delta) {
+  const gamepad = getLeftGamepad();
+  if (!gamepad || !gamepad.axes || gamepad.axes.length < 4) return;
+
+  // En mandos Touch de Quest, axes[2] y axes[3] son el eje X/Y del stick
+  let x = gamepad.axes[2];
+  let y = gamepad.axes[3];
+
+  if (Math.abs(x) < DEADZONE) x = 0;
+  if (Math.abs(y) < DEADZONE) y = 0;
+  if (x === 0 && y === 0) return;
+
+  // Dirección hacia donde mira la cámara, proyectada sobre el suelo
+  const forward = new THREE.Vector3();
+  camera.getWorldDirection(forward);
+  forward.y = 0;
+  forward.normalize();
+
+  const right = new THREE.Vector3();
+  right.crossVectors(forward, new THREE.Vector3(0, 1, 0)).negate();
+
+  const moveDist = MOVE_SPEED * delta;
+
+  // y del stick: arriba = -1 (avanzar), abajo = 1 (retroceder)
+  dolly.position.addScaledVector(forward, -y * moveDist);
+  dolly.position.addScaledVector(right, x * moveDist);
 }
 
 function onWindowResize() {
@@ -273,6 +307,8 @@ function animate() {
 }
 
 function render() {
+  const delta = clock.getDelta();
+  handleLocomotion(delta);
   renderer.render(scene, camera);
 }
 </script>
