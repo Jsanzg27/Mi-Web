@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mi Espacio VR</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    font-family: system-ui, sans-serif;
+  }
+  #info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    padding: 14px;
+    z-index: 5;
+    pointer-events: none;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  }
+  #VRButton {
+    position: absolute !important;
+  }
+</style>
+</head>
+<body>
+
+<div id="info">Ponte el visor y pulsa "ENTER VR" para entrar en tu espacio virtual 🚀</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { VRButton } from 'three/addons/webxr/VRButton.js';
+import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
+
+let scene, camera, renderer;
+let controller1, controller2, controllerGrip1, controllerGrip2;
+let controllerModelFactory;
+
+// Objetos que se pueden agarrar
+const grabbables = [];
+
+// Referencia: qué objeto está agarrando cada controlador ahora mismo
+const grabbedByController = new Map();
+
+init();
+animate();
+
+function init() {
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x1b1f2a);
+  scene.fog = new THREE.Fog(0x1b1f2a, 8, 25);
+
+  camera = new THREE.PerspectiveCamera(
+    70,
+    window.innerWidth / window.innerHeight,
+    0.05,
+    50
+  );
+  camera.position.set(0, 1.6, 3);
+
+  // Luces
+  const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444455, 1.2);
+  scene.add(hemiLight);
+
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+  dirLight.position.set(3, 6, 2);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.set(1024, 1024);
+  dirLight.shadow.camera.left = -6;
+  dirLight.shadow.camera.right = 6;
+  dirLight.shadow.camera.top = 6;
+  dirLight.shadow.camera.bottom = -6;
+  scene.add(dirLight);
+
+  // Suelo
+  const floorGeo = new THREE.PlaneGeometry(12, 12);
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0x2e3444, roughness: 0.9 });
+  const floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // Rejilla de referencia en el suelo
+  const grid = new THREE.GridHelper(12, 24, 0x556080, 0x333a4a);
+  scene.add(grid);
+
+  // Paredes simples (para dar sensación de "sala")
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0x22273a, roughness: 1, side: THREE.DoubleSide });
+  const wallGeo = new THREE.PlaneGeometry(12, 4);
+
+  const wallBack = new THREE.Mesh(wallGeo, wallMat);
+  wallBack.position.set(0, 2, -6);
+  scene.add(wallBack);
+
+  const wallLeft = new THREE.Mesh(wallGeo, wallMat);
+  wallLeft.position.set(-6, 2, 0);
+  wallLeft.rotation.y = Math.PI / 2;
+  scene.add(wallLeft);
+
+  const wallRight = new THREE.Mesh(wallGeo, wallMat);
+  wallRight.position.set(6, 2, 0);
+  wallRight.rotation.y = -Math.PI / 2;
+  scene.add(wallRight);
+
+  // Objetos agarrables: cubos y esferas de colores sobre una mesa
+  const tableGeo = new THREE.BoxGeometry(1.4, 0.05, 0.8);
+  const tableMat = new THREE.MeshStandardMaterial({ color: 0x6b4a2f, roughness: 0.7 });
+  const table = new THREE.Mesh(tableGeo, tableMat);
+  table.position.set(0, 0.75, -0.8);
+  table.castShadow = true;
+  table.receiveShadow = true;
+  scene.add(table);
+
+  const legGeo = new THREE.BoxGeometry(0.05, 0.75, 0.05);
+  const legPositions = [
+    [-0.65, 0.375, -1.15], [0.65, 0.375, -1.15],
+    [-0.65, 0.375, -0.45], [0.65, 0.375, -0.45]
+  ];
+  legPositions.forEach(p => {
+    const leg = new THREE.Mesh(legGeo, tableMat);
+    leg.position.set(...p);
+    leg.castShadow = true;
+    scene.add(leg);
+  });
+
+  const colors = [0xff5c5c, 0x5cb8ff, 0x5cff8a, 0xffe45c, 0xd45cff, 0xff9d5c];
+  for (let i = 0; i < 6; i++) {
+    let mesh;
+    if (i % 2 === 0) {
+      const geo = new THREE.BoxGeometry(0.14, 0.14, 0.14);
+      const mat = new THREE.MeshStandardMaterial({ color: colors[i], roughness: 0.4, metalness: 0.1 });
+      mesh = new THREE.Mesh(geo, mat);
+    } else {
+      const geo = new THREE.SphereGeometry(0.08, 24, 24);
+      const mat = new THREE.MeshStandardMaterial({ color: colors[i], roughness: 0.3, metalness: 0.2 });
+      mesh = new THREE.Mesh(geo, mat);
+    }
+    const col = i % 3;
+    const row = Math.floor(i / 3);
+    mesh.position.set(-0.4 + col * 0.4, 0.85, -0.95 + row * 0.3);
+    mesh.castShadow = true;
+    mesh.userData.grabbable = true;
+    mesh.userData.originalScale = mesh.scale.clone();
+    scene.add(mesh);
+    grabbables.push(mesh);
+  }
+
+  // Renderer con WebXR activado
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.xr.enabled = true;
+  document.body.appendChild(renderer.domElement);
+
+  // Botón oficial de Three.js para entrar/salir de VR
+  document.body.appendChild(VRButton.createButton(renderer));
+
+  // --- Controladores ---
+  controllerModelFactory = new XRControllerModelFactory();
+
+  // Rayo visual que sale de cada controlador (ayuda a apuntar)
+  const rayGeometry = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(0, 0, -1),
+  ]);
+
+  function buildController() {
+    const line = new THREE.Line(rayGeometry, new THREE.LineBasicMaterial({ color: 0xffffff }));
+    line.scale.z = 0.3;
+    line.name = 'ray';
+    return line;
+  }
+
+  controller1 = renderer.xr.getController(0);
+  controller1.add(buildController());
+  controller1.userData.handedness = 'controller1';
+  scene.add(controller1);
+
+  controller2 = renderer.xr.getController(1);
+  controller2.add(buildController());
+  controller2.userData.handedness = 'controller2';
+  scene.add(controller2);
+
+  controller1.addEventListener('selectstart', () => onSelectStart(controller1));
+  controller1.addEventListener('selectend', () => onSelectEnd(controller1));
+  controller2.addEventListener('selectstart', () => onSelectStart(controller2));
+  controller2.addEventListener('selectend', () => onSelectEnd(controller2));
+
+  controllerGrip1 = renderer.xr.getControllerGrip(0);
+  controllerGrip1.add(controllerModelFactory.createControllerModel(controllerGrip1));
+  scene.add(controllerGrip1);
+
+  controllerGrip2 = renderer.xr.getControllerGrip(1);
+  controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
+  scene.add(controllerGrip2);
+
+  window.addEventListener('resize', onWindowResize);
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+// Busca el objeto agarrable más cercano a un controlador (dentro de un radio)
+function findClosestGrabbable(controller) {
+  const controllerPos = new THREE.Vector3();
+  controller.getWorldPosition(controllerPos);
+
+  let closest = null;
+  let closestDist = 0.18; // radio de "agarre" en metros
+
+  grabbables.forEach(obj => {
+    if (obj.userData.grabbedBy) return; // ya está siendo agarrado por otro controlador
+    const objPos = new THREE.Vector3();
+    obj.getWorldPosition(objPos);
+    const dist = controllerPos.distanceTo(objPos);
+    if (dist < closestDist) {
+      closestDist = dist;
+      closest = obj;
+    }
+  });
+
+  return closest;
+}
+
+function onSelectStart(controller) {
+  const obj = findClosestGrabbable(controller);
+  if (obj) {
+    // Reparent temporalmente el objeto al controlador para que siga su movimiento
+    controller.attach(obj);
+    obj.userData.grabbedBy = controller;
+    grabbedByController.set(controller, obj);
+
+    // pequeño feedback visual: escala ligera al agarrar
+    obj.scale.multiplyScalar(1.1);
+  }
+}
+
+function onSelectEnd(controller) {
+  const obj = grabbedByController.get(controller);
+  if (obj) {
+    // Al soltar, volvemos a poner el objeto en la escena principal
+    // conservando su posición/rotación mundial actual
+    scene.attach(obj);
+    obj.userData.grabbedBy = null;
+    obj.scale.copy(obj.userData.originalScale);
+    grabbedByController.delete(controller);
+  }
+}
+
+function animate() {
+  renderer.setAnimationLoop(render);
+}
+
+function render() {
+  renderer.render(scene, camera);
+}
+</script>
+
+</body>
+</html>
