@@ -33,7 +33,7 @@
 </head>
 <body>
 
-<div id="info">Ponte el visor y pulsa "ENTER VR" para entrar en tu espacio virtual 🚀<br/>Usa la palanca del mando izquierdo para moverte</div>
+<div id="info">Ponte el visor y pulsa "ENTER VR" para entrar en tu espacio virtual 🚀<br/>Palanca izquierda: moverte · Botón B (derecho): menú para invocar objetos</div>
 
 <script type="importmap">
 {
@@ -63,6 +63,17 @@ const grabbedByController = new Map();
 const MOVE_SPEED = 2.2;
 // Evita reaccionar a ruido del stick cuando está casi en el centro
 const DEADZONE = 0.15;
+
+// --- Menú flotante (botón B del mando derecho) ---
+let menuGroup = null;
+let menuHitMesh = null;
+let menuVisible = false;
+let rightButtonBPrev = false;
+const raycaster = new THREE.Raycaster();
+const tempMatrix = new THREE.Matrix4();
+
+// Paleta de colores para las esferas invocadas
+const SPHERE_COLORS = [0xff5c5c, 0x5cb8ff, 0x5cff8a, 0xffe45c, 0xd45cff, 0xff9d5c];
 
 init();
 animate();
@@ -135,6 +146,9 @@ function init() {
 
   // Sala vacía por ahora: sin mesa ni objetos.
   // Más adelante podemos volver a añadir cosas agarrables aquí.
+
+  // Menú flotante (se muestra/oculta con el botón B del mando derecho)
+  createMenu();
 
   // Renderer con WebXR activado
   renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -233,6 +247,9 @@ function handleLocomotion(delta) {
   if (Math.abs(y) < DEADZONE) y = 0;
   if (x === 0 && y === 0) return;
 
+  // Si nos movemos, el menú flotante (si está abierto) se cierra
+  if (menuVisible) closeMenu();
+
   // Dirección hacia donde mira la cámara, proyectada sobre el suelo
   const forward = new THREE.Vector3();
   camera.getWorldDirection(forward);
@@ -240,13 +257,170 @@ function handleLocomotion(delta) {
   forward.normalize();
 
   const right = new THREE.Vector3();
-  right.crossVectors(forward, new THREE.Vector3(0, 1, 0)).negate();
+  right.crossVectors(forward, new THREE.Vector3(0, 1, 0));
 
   const moveDist = MOVE_SPEED * delta;
 
   // y del stick: arriba = -1 (avanzar), abajo = 1 (retroceder)
   dolly.position.addScaledVector(forward, -y * moveDist);
   dolly.position.addScaledVector(right, x * moveDist);
+}
+
+// Busca el gamepad del mando DERECHO entre los dos controladores
+function getRightGamepad() {
+  const candidates = [controller1, controller2];
+  for (const c of candidates) {
+    const src = c.userData.inputSource;
+    if (src && src.handedness === 'right' && src.gamepad) {
+      return src.gamepad;
+    }
+  }
+  return null;
+}
+
+// Devuelve cuál de los dos objetos controller1/controller2 es el derecho
+function getRightController() {
+  const candidates = [controller1, controller2];
+  for (const c of candidates) {
+    const src = c.userData.inputSource;
+    if (src && src.handedness === 'right') return c;
+  }
+  return null;
+}
+
+// Dibuja un rectángulo con esquinas redondeadas en un canvas 2D
+function drawRoundedRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+// Crea el panel del menú (una vez) usando una textura de canvas 2D
+function createMenu() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = 'rgba(18, 20, 32, 0.92)';
+  drawRoundedRect(ctx, 8, 8, canvas.width - 16, canvas.height - 16, 26);
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(120, 160, 255, 0.9)';
+  ctx.lineWidth = 5;
+  drawRoundedRect(ctx, 8, 8, canvas.width - 16, canvas.height - 16, 26);
+  ctx.stroke();
+
+  ctx.fillStyle = '#5cb8ff';
+  ctx.beginPath();
+  ctx.arc(canvas.width / 2, canvas.height / 2 - 38, 30, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '600 30px system-ui, sans-serif';
+  ctx.fillText('Invocar esfera', canvas.width / 2, canvas.height / 2 + 55);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    side: THREE.DoubleSide,
+  });
+  const geometry = new THREE.PlaneGeometry(0.42, 0.21);
+
+  menuHitMesh = new THREE.Mesh(geometry, material);
+  menuHitMesh.name = 'menuButton';
+
+  menuGroup = new THREE.Group();
+  menuGroup.add(menuHitMesh);
+  menuGroup.visible = false;
+  scene.add(menuGroup);
+}
+
+// Abre el menú delante del mando derecho, orientado hacia el jugador
+function openMenu() {
+  const rc = getRightController() || controller2;
+  const controllerPos = new THREE.Vector3();
+  rc.getWorldPosition(controllerPos);
+
+  menuGroup.position.copy(controllerPos);
+  menuGroup.position.y += 0.15;
+
+  const camPos = new THREE.Vector3();
+  camera.getWorldPosition(camPos);
+  const target = camPos.clone();
+  target.y = menuGroup.position.y; // que quede vertical, sin inclinarse
+
+  menuGroup.lookAt(target);
+  menuGroup.rotateY(Math.PI); // la cara con la textura debe mirar al jugador
+
+  menuGroup.visible = true;
+  menuVisible = true;
+}
+
+function closeMenu() {
+  menuGroup.visible = false;
+  menuVisible = false;
+}
+
+// Lee el botón B del mando derecho (índice 5 en el mapeo xr-standard)
+// y detecta el flanco de subida para alternar abrir/cerrar el menú
+function handleMenuToggleButton() {
+  const gamepad = getRightGamepad();
+  if (!gamepad || !gamepad.buttons || gamepad.buttons.length < 6) {
+    rightButtonBPrev = false;
+    return;
+  }
+  const pressed = gamepad.buttons[5].pressed;
+  if (pressed && !rightButtonBPrev) {
+    if (menuVisible) closeMenu();
+    else openMenu();
+  }
+  rightButtonBPrev = pressed;
+}
+
+// Lanza un rayo desde un controlador y comprueba si apunta al botón del menú
+function isPointingAtMenu(controller) {
+  if (!menuVisible) return false;
+  tempMatrix.identity().extractRotation(controller.matrixWorld);
+  const origin = new THREE.Vector3().setFromMatrixPosition(controller.matrixWorld);
+  const direction = new THREE.Vector3(0, 0, -1).applyMatrix4(tempMatrix).normalize();
+  raycaster.set(origin, direction);
+  return raycaster.intersectObject(menuHitMesh, false).length > 0;
+}
+
+// Crea una esfera nueva delante del jugador y la deja lista para agarrarla
+function spawnSphere() {
+  const color = SPHERE_COLORS[Math.floor(Math.random() * SPHERE_COLORS.length)];
+  const geo = new THREE.SphereGeometry(0.09, 24, 24);
+  const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.3, metalness: 0.2 });
+  const mesh = new THREE.Mesh(geo, mat);
+
+  const camPos = new THREE.Vector3();
+  camera.getWorldPosition(camPos);
+  const camDir = new THREE.Vector3();
+  camera.getWorldDirection(camDir);
+  camDir.y = 0;
+  camDir.normalize();
+
+  mesh.position.copy(camPos).addScaledVector(camDir, 0.6);
+  mesh.position.y = 1.1 + Math.random() * 0.2;
+  mesh.position.x += (Math.random() - 0.5) * 0.3;
+
+  mesh.castShadow = true;
+  mesh.userData.grabbable = true;
+  mesh.userData.originalScale = mesh.scale.clone();
+
+  scene.add(mesh);
+  grabbables.push(mesh);
+
+  closeMenu();
 }
 
 function onWindowResize() {
@@ -278,6 +452,12 @@ function findClosestGrabbable(controller) {
 }
 
 function onSelectStart(controller) {
+  // Si el menú está abierto y este controlador apunta al botón, invocamos
+  if (isPointingAtMenu(controller)) {
+    spawnSphere();
+    return;
+  }
+
   const obj = findClosestGrabbable(controller);
   if (obj) {
     // Reparent temporalmente el objeto al controlador para que siga su movimiento
@@ -308,6 +488,7 @@ function animate() {
 
 function render() {
   const delta = clock.getDelta();
+  handleMenuToggleButton();
   handleLocomotion(delta);
   renderer.render(scene, camera);
 }
