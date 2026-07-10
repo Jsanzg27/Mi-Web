@@ -75,6 +75,14 @@ const tempMatrix = new THREE.Matrix4();
 // Paleta de colores para las esferas invocadas
 const SPHERE_COLORS = [0xff5c5c, 0x5cb8ff, 0x5cff8a, 0xffe45c, 0xd45cff, 0xff9d5c];
 
+// --- Física sencilla (gravedad + suelo + sala cerrada) ---
+const GRAVITY = -9.8; // m/s^2
+const FLOOR_Y = 0;
+const ROOM_HALF = 6;        // las paredes están en -6/+6 en X y Z
+const WALL_MARGIN = 0.35;   // para que el jugador no "toque" la pared con la cabeza
+const PLAYER_HALF = ROOM_HALF - WALL_MARGIN;
+const OBJECT_MARGIN = 0.15; // para que los objetos no se metan dentro de la pared
+
 init();
 animate();
 
@@ -143,6 +151,11 @@ function init() {
   wallRight.position.set(6, 2, 0);
   wallRight.rotation.y = -Math.PI / 2;
   scene.add(wallRight);
+
+  const wallFront = new THREE.Mesh(wallGeo, wallMat);
+  wallFront.position.set(0, 2, 6);
+  wallFront.rotation.y = Math.PI;
+  scene.add(wallFront);
 
   // Sala vacía por ahora: sin mesa ni objetos.
   // Más adelante podemos volver a añadir cosas agarrables aquí.
@@ -264,6 +277,13 @@ function handleLocomotion(delta) {
   // y del stick: arriba = -1 (avanzar), abajo = 1 (retroceder)
   dolly.position.addScaledVector(forward, -y * moveDist);
   dolly.position.addScaledVector(right, x * moveDist);
+
+  // Sala cerrada: no dejamos que el jugador atraviese las paredes
+  // (esto limita el movimiento por palanca; el desplazamiento físico
+  // real dentro del área de juego del Quest no se puede bloquear así,
+  // pero sí evita "salir" de la sala usando el stick)
+  dolly.position.x = THREE.MathUtils.clamp(dolly.position.x, -PLAYER_HALF, PLAYER_HALF);
+  dolly.position.z = THREE.MathUtils.clamp(dolly.position.z, -PLAYER_HALF, PLAYER_HALF);
 }
 
 // Busca el gamepad del mando DERECHO entre los dos controladores
@@ -354,11 +374,16 @@ function openMenu() {
 
   const camPos = new THREE.Vector3();
   camera.getWorldPosition(camPos);
-  const target = camPos.clone();
-  target.y = menuGroup.position.y; // que quede vertical, sin inclinarse
 
-  menuGroup.lookAt(target);
-  menuGroup.rotateY(Math.PI); // la cara con la textura debe mirar al jugador
+  // Truco para orientar el panel: en vez de "mirar hacia" la cámara
+  // (lo que dejaría la cara con la textura mirando hacia el lado
+  // contrario), lo apuntamos hacia un punto "detrás" del panel, en
+  // dirección opuesta al jugador. Así la cara frontal (+Z, la que
+  // tiene el texto) queda mirando correctamente hacia el jugador.
+  const flatCamPos = camPos.clone();
+  flatCamPos.y = menuGroup.position.y;
+  const awayPoint = menuGroup.position.clone().sub(flatCamPos).add(menuGroup.position);
+  menuGroup.lookAt(awayPoint);
 
   menuGroup.visible = true;
   menuVisible = true;
@@ -416,11 +441,107 @@ function spawnSphere() {
   mesh.castShadow = true;
   mesh.userData.grabbable = true;
   mesh.userData.originalScale = mesh.scale.clone();
+  mesh.userData.radius = 0.09;
+  mesh.userData.velocityY = 0; // empieza en reposo, la gravedad la irá acelerando
 
   scene.add(mesh);
   grabbables.push(mesh);
 
   closeMenu();
+}
+
+// Aplica gravedad a todos los objetos invocados que no estén siendo
+// agarrados en este momento, resuelve las colisiones entre ellos, y
+// evita que atraviesen el suelo o las paredes
+function updatePhysics(delta) {
+  // 1) Gravedad: integramos la velocidad vertical y la posición
+  grabbables.forEach(obj => {
+    if (obj.userData.grabbedBy) return; // mientras se agarra, lo controla la mano
+    obj.userData.velocityY += GRAVITY * delta;
+    obj.position.y += obj.userData.velocityY * delta;
+  });
+
+  // 2) Colisiones entre objetos: varias pasadas para que se estabilicen
+  //    bien cuando hay varias esferas juntas o apiladas
+  for (let iter = 0; iter < 3; iter++) {
+    resolveCollisions();
+  }
+
+  // 3) No atravesar el suelo ni las paredes (sala cerrada)
+  const objHalf = ROOM_HALF - OBJECT_MARGIN;
+  grabbables.forEach(obj => {
+    if (obj.userData.grabbedBy) return;
+    const radius = obj.userData.radius || 0.09;
+
+    const restY = FLOOR_Y + radius;
+    if (obj.position.y < restY) {
+      obj.position.y = restY;
+      obj.userData.velocityY = 0;
+    }
+
+    obj.position.x = THREE.MathUtils.clamp(obj.position.x, -objHalf + radius, objHalf - radius);
+    obj.position.z = THREE.MathUtils.clamp(obj.position.z, -objHalf + radius, objHalf - radius);
+  });
+}
+
+// Comprueba cada pareja de objetos y, si se solapan, los separa a lo
+// largo de la línea que une sus centros (colisión esfera-esfera).
+// Si uno de los dos está agarrado por una mano, solo se mueve el otro
+// (la mano manda sobre el objeto que sostiene).
+function resolveCollisions() {
+  const worldPos = new THREE.Vector3();
+  const positions = grabbables.map(obj => {
+    obj.getWorldPosition(worldPos);
+    return worldPos.clone();
+  });
+
+  for (let i = 0; i < grabbables.length; i++) {
+    for (let j = i + 1; j < grabbables.length; j++) {
+      const a = grabbables[i];
+      const b = grabbables[j];
+      const aHeld = !!a.userData.grabbedBy;
+      const bHeld = !!b.userData.grabbedBy;
+      if (aHeld && bHeld) continue; // dos manos sujetando cada una la suya: no interferimos
+
+      const ra = a.userData.radius || 0.09;
+      const rb = b.userData.radius || 0.09;
+      const minDist = ra + rb;
+
+      const diff = positions[j].clone().sub(positions[i]);
+      const dist = diff.length();
+      if (dist === 0 || dist >= minDist) continue;
+
+      const overlap = minDist - dist;
+      const normal = diff.multiplyScalar(1 / dist); // de A hacia B
+
+      let correctionA = new THREE.Vector3();
+      let correctionB = new THREE.Vector3();
+
+      if (aHeld) {
+        correctionB.copy(normal).multiplyScalar(overlap);
+      } else if (bHeld) {
+        correctionA.copy(normal).multiplyScalar(-overlap);
+      } else {
+        correctionA.copy(normal).multiplyScalar(-overlap / 2);
+        correctionB.copy(normal).multiplyScalar(overlap / 2);
+      }
+
+      if (!aHeld) {
+        a.position.add(correctionA);
+        // si lo hemos empujado hacia arriba (está "apoyándose" en otro
+        // objeto), le quitamos la velocidad de caída para que se asiente
+        if (correctionA.y > 0.001 && a.userData.velocityY < 0) {
+          a.userData.velocityY = 0;
+        }
+      }
+      if (!bHeld) {
+        b.position.add(correctionB);
+        if (correctionB.y > 0.001 && b.userData.velocityY < 0) {
+          b.userData.velocityY = 0;
+        }
+      }
+    }
+  }
 }
 
 function onWindowResize() {
@@ -463,6 +584,7 @@ function onSelectStart(controller) {
     // Reparent temporalmente el objeto al controlador para que siga su movimiento
     controller.attach(obj);
     obj.userData.grabbedBy = controller;
+    obj.userData.velocityY = 0; // deja de caer mientras lo sostenemos
     grabbedByController.set(controller, obj);
 
     // pequeño feedback visual: escala ligera al agarrar
@@ -477,6 +599,7 @@ function onSelectEnd(controller) {
     // conservando su posición/rotación mundial actual
     scene.attach(obj);
     obj.userData.grabbedBy = null;
+    obj.userData.velocityY = 0; // vuelve a caer con gravedad desde donde se suelta
     obj.scale.copy(obj.userData.originalScale);
     grabbedByController.delete(controller);
   }
@@ -490,6 +613,7 @@ function render() {
   const delta = clock.getDelta();
   handleMenuToggleButton();
   handleLocomotion(delta);
+  updatePhysics(delta);
   renderer.render(scene, camera);
 }
 </script>
